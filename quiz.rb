@@ -6,7 +6,7 @@ puts "Привет, #{username}!"
 
 
 puts "Какой твой любимый язык программирования?"
-favorite_language = gets.chomp.downcase
+favorite_language = STDIN.gets.chomp.downcase
 
 
 if favorite_language == "ruby"
@@ -25,11 +25,11 @@ else
   end
 end
 puts 'Введите команду на языке Ruby :'
-ruby_command = gets.chomp
+ruby_command = STDIN.gets.chomp
 puts 'Результат выполнения команды Ruby:'
 eval(ruby_command)
 
 puts 'Введите команду для операционной системы'
-os_command = gets.chomp
+os_command = STDIN.gets.chomp
 puts 'Результат выполнения команды ОС'
 system(os_command)
