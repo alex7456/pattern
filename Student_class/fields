@@ -1,1 +1,13 @@
-
+class Student
+attr_accessor :id, :surname, :name, :patronymic, :phone, :telegram, :email, :git 
+def initialize(surname:, name:, patronymic:, id: nill, phone:nill, telegram:nill,email:nill,git:nill)
+@id = id
+@surname = surname
+@name = name
+@patronymic = patronymic
+@phone = phone
+@telegram=telegram
+@email = email
+@git = git
+end
+end
