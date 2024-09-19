@@ -6,5 +6,5 @@ if respond_to?("#{key}=")
 send("#{key}=", value) 
 end
 end
-end
+end 
 end
