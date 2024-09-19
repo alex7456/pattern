@@ -3,7 +3,7 @@ attr_accessor :id, :surname, :name, :patronymic, :phone, :telegram, :email, :git
 def initialize(**atributes)
 atributes.each do |key,value|
 if respond_to?("#{key}=")
-send("#{key}=", value)
+send("#{key}=", value) 
 end
 end
 end
