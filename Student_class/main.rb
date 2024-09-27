@@ -1,4 +1,5 @@
-require_relative "Student"
+require_relative 'Student'
+
 begin
   student1 = Student.new(id: '1', surname: 'Иванов', name: 'Иван', patronymic: 'Иванович', git: 'ivan123')
   student1.set_contacts(phone: '111-222-333', telegram: 'ivan123', email: 'ivan@mail.ru')
@@ -26,19 +27,13 @@ rescue ArgumentError => e
   student3 = nil
 end
 
-
 def print_student_info(student)
   if student.nil?
     puts "Студент не создан из-за ошибки в данных."
     return
   end
 
-  puts "ID: #{student.id}"
-  puts "ФИО: #{student.surname} #{student.name} #{student.patronymic}"
-  puts "Телефон: #{student.phone}" if student.phone
-  puts "Телеграм: #{student.telegram}" if student.telegram
-  puts "Почта: #{student.email}" if student.email
-  puts "Гит: #{student.git}" if student.git
+  puts student.getInfo
   puts "-" * 20
 end
 
