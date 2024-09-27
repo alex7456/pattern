@@ -15,7 +15,6 @@ class Student
       end
     end
 
-
     raise ArgumentError, @errors.join(", ") unless @errors.empty?
   end
 
@@ -23,9 +22,29 @@ class Student
     set_phone(phone) unless phone.nil?
     set_email(email) unless email.nil?
     set_telegram(telegram) unless telegram.nil?
-    validate_contact # Валидация на наличие хотя бы одного контакта
+    validate_contact 
   end
-
+def getInfo
+ "#{get_full_initials}; Git: #{get_git}; Связь: #{get_contact}"
+  end
+def get_full_initials
+"#{surname} #{name[0]}.#{patronymic[0]}."
+  end
+  def get_git
+  git
+  end
+  def get_contact
+   if phone
+      "Телефон: #{phone}"
+    elsif email
+      "Email: #{email}"
+    elsif telegram
+      "Телеграм: #{telegram}"
+    else
+      "Нет контактов"
+    end
+  end
+  
   
   def validate_contact
     if phone.nil? && email.nil? && telegram.nil?
@@ -47,8 +66,8 @@ class Student
   end
 
   
-  private
-
+  
+private
   def set_phone(value)
     if value.nil? || Student.valid_phone_number?(value)
       @phone = value
