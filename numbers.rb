@@ -1,24 +1,44 @@
-puts 'Введите число:'
-number = gets.chomp.to_i
-count = 0
-(1..number).each do |i|
-if i.even? && i.gcd(number)!=1
-count+=1
+
+def count_even_non_coprimes(n)
+  count = 0
+  (1..n).each do |i|
+    if i.even? && i.gcd(n) != 1
+      count += 1
+    end
+  end
+  count
 end
+
+number = 12
+puts "Количество чётных чисел, не взаимно простых с числом #{number}: #{count_even_non_coprimes(number)}"
+
+def max_digit_not_divisible_by_3(n)
+  digits = n.to_s.chars.map(&:to_i)
+  digits.reject { |digit| digit % 3 == 0 }.max
 end
-puts "Количество чётных чисел, не взаимно простых с числом #{number}: #{count}"
 
-puts 'Введите число:'
-number = gets.chomp.to_i
-digits = number.to_s.chars.map(&:to_i)
-max_digit = digits.reject { |digit| digit % 3 == 0 }.max
-puts "Максимальная цифра числа #{number}, не делящаяся на 3: #{max_digit}"
+number = 923456
+puts "Максимальная цифра числа #{number}, не делящаяся на 3: #{max_digit_not_divisible_by_3(number)}"
 
-puts 'Введите число:'
-number = gets.chomp.to_i
-smallest_div = (2..number).find { |i| number % i == 0 }
-max_non_coprime = (1...number).select { |i| i.gcd(number) != 1 && i % smallest_div != 0 }.max
-sum_digits_less_than_5 = number.to_s.chars.map(&:to_i).select { |digit| digit < 5 }.sum
-product = max_non_coprime * sum_digits_less_than_5
-puts "Произведение максимального числа, не взаимно простого с #{number}, и суммы цифр, меньших 5: #{product}"
+def smallest_divisor(n)
+  (2..n).each { |i| return i if n % i == 0 }
+end
 
+def max_non_coprime_not_divisible(n)
+  min_div = smallest_divisor(n)
+  max_non_coprime = (1...n).select { |i| i.gcd(n) != 1 && i % min_div != 0 }.max
+  max_non_coprime
+end
+
+def sum_digits_less_than_5(n)
+  n.to_s.chars.map(&:to_i).select { |digit| digit < 5 }.sum
+end
+
+def product_of_max_and_sum(n)
+  max_non_coprime = max_non_coprime_not_divisible(n)
+  sum_digits = sum_digits_less_than_5(n)
+  max_non_coprime * sum_digits
+end
+
+number = 36
+puts "Произведение: #{product_of_max_and_sum(number)}"
