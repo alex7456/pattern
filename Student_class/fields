@@ -1,125 +1,44 @@
-class Student
-  attr_accessor :id, :surname, :name, :patronymic, :git
-  attr_reader :phone, :telegram, :email
+require_relative 'PersonBase'
 
-  def initialize(**attributes)
-    @errors = []
-    
-    attributes.each do |key, value|
-      if respond_to?("#{key}=")
-        begin
-          send("#{key}=", value)
-        rescue ArgumentError => e
-          @errors << e.message
-        end
-      end
-    end
+class Student < PersonBase
+  attr_accessor :name, :surname, :patronymic
 
-    raise ArgumentError, @errors.join(", ") unless @errors.empty?
+  def initialize(id:, surname:, name:, patronymic:, git:)
+    full_name = "#{surname} #{name[0]}.#{patronymic[0]}."
+    super(id: id, surname_initials: full_name, git: git)
+    @name = name
+    @surname = surname
+    @patronymic = patronymic
+    validate_fio
   end
 
-  def set_contacts(phone: nil, email: nil, telegram: nil)
-    set_phone(phone) unless phone.nil?
-    set_email(email) unless email.nil?
-    set_telegram(telegram) unless telegram.nil?
-    validate_contact 
-  end
-def getInfo
- "#{get_full_initials}; Git: #{get_git}; Связь: #{get_contact}"
-  end
-def get_full_initials
-"#{surname} #{name[0]}.#{patronymic[0]}."
-  end
-  def get_git
-  git
-  end
-  def get_contact
-   if phone
-      "Телефон: #{phone}"
-    elsif email
-      "Email: #{email}"
-    elsif telegram
-      "Телеграм: #{telegram}"
-    else
-      "Нет контактов"
-    end
-  end
-  
-  
-  def validate_contact
-    if phone.nil? && email.nil? && telegram.nil?
-      raise ArgumentError, "Необходимо указать хоть один контакт: телефон, email или Телеграм"
-    end
+  def getInfo
+    "#{surname_initials}; Git: #{git}; Связь: #{get_contact}"
   end
 
-  
-  def validate_git
-    if git.nil? || git.empty?
-      raise ArgumentError, "Необходимо указать Github"
-    end
-  end
-
-  
   def validate
+    raise ArgumentError, "Необходимо указать Git" if git.nil? || git.empty?
+    validate_fio
     validate_contact
-    validate_git
   end
 
-  
-  
-private
-  def set_phone(value)
-    if value.nil? || Student.valid_phone_number?(value)
-      @phone = value
-    else
-      raise ArgumentError, "Недопустимый номер телефона: #{value}"
+  private
+
+  # Валидация ФИО (фамилия, имя, отчество)
+  def validate_fio
+    validate_name_part(@surname, 'Фамилия')
+    validate_name_part(@name, 'Имя')
+    validate_name_part(@patronymic, 'Отчество')
+  end
+
+  # Валидация отдельной части ФИО (Фамилия, Имя, Отчество)
+  def validate_name_part(name_part, field_name)
+    if name_part.nil? || name_part.strip.empty?
+      raise ArgumentError, "#{field_name} не может быть пустым"
     end
-  end
 
-  def set_email(value)
-    if value.nil? || Student.valid_email?(value)
-      @email = value
-    else
-      raise ArgumentError, "Недопустимый email: #{value}"
+    unless name_part =~ /\A[А-Яа-яЁёA-Za-z]+\z/
+      raise ArgumentError, "#{field_name} должно содержать только буквы"
     end
-  end
-
-  def set_telegram(value)
-    if value.nil? || Student.valid_telegram?(value)
-      @telegram = value
-    else
-      raise ArgumentError, "Недопустимый Telegram: #{value}"
-    end
-  end
-
-  
-  def self.valid_phone_number?(phone)
-    !!(phone =~ /\A(\+?\d{1,3})?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{3,4}\z/)
-  end
-
-  
-  def self.valid_email?(email)
-    !!(email =~ /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i)
-  end
-
-  
-  def self.valid_id?(id)
-    id.to_s =~ /^\d+$/
-  end
-
-  
-  def self.valid_name_part?(name_part)
-    !!(name_part =~ /\A[А-Яа-яЁёA-Za-z]+\z/)
-  end
-
-  
-  def self.valid_telegram?(telegram)
-    !!(telegram =~ /\A\w+\z/)
-  end
-
-  
-  def self.valid_git?(git)
-    !!(git =~ /\A[\w-]+\z/)
   end
 end
-
