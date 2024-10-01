@@ -1,13 +1,49 @@
-<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36" version="24.7.16">
-<diagram name="Страница — 1" id="SQCE1xJeVbX35EX1CvOg">
 <mxGraphModel dx="1434" dy="780" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
-<root>
-<mxCell id="0"/>
-<mxCell id="1" parent="0"/>
-<mxCell id="XZPLey_eHk0BH1R8GiT9-5" value="<p style="margin:0px;margin-top:4px;text-align:center;"><b>Student</b></p><hr size="1" style="border-style:solid;"><p style="margin: 0px 0px 0px 4px; font-size: 14px;"><font style="font-size: 14px;">id</font></p><p style="margin: 0px 0px 0px 4px; font-size: 14px;"><font style="font-size: 14px;">surname</font></p><p style="margin: 0px 0px 0px 4px; font-size: 14px;"><font style="font-size: 14px;">name</font></p><p style="margin: 0px 0px 0px 4px; font-size: 14px;"><font style="font-size: 14px;">patronymic</font></p><p style="margin: 0px 0px 0px 4px; font-size: 14px;"><font style="font-size: 14px;">git</font></p><p style="margin: 0px 0px 0px 4px; font-size: 14px;"><font style="font-size: 14px;">phone</font></p><p style="margin: 0px 0px 0px 4px; font-size: 14px;"><font style="font-size: 14px;">telegram</font></p><p style="margin: 0px 0px 0px 4px; font-size: 14px;"><font style="font-size: 14px;">email</font></p><hr size="1" style="border-style:solid;"><p style="margin: 0px 0px 0px 4px; font-size: 14px;"><font style="font-size: 14px;"><span style="" class="hljs-title function_ invoke__">initialize</span>(**attr)&nbsp;</font></p><p style="margin: 0px 0px 0px 4px; font-size: 14px;"><font style="font-size: 14px;"><span class="hljs-title function_ invoke__">set_contacts</span>(phone, email, telegram)&nbsp;</font></p><p style="margin: 0px 0px 0px 4px; font-size: 14px;"><font style="font-size: 14px;"><span class="hljs-title function_ invoke__">validate_contact</span>()</font></p><p style="margin: 0px 0px 0px 4px; font-size: 14px;"><font style="font-size: 14px;"><span class="hljs-title function_ invoke__">validate_git</span>()&nbsp;</font></p><p style="margin: 0px 0px 0px 4px; font-size: 14px;"><font style="font-size: 14px;"><span style="background-color: initial;" class="hljs-title function_ invoke__">validate</span><span style="background-color: initial;">()&nbsp;</span></font></p><p style="margin: 0px 0px 0px 4px; font-size: 14px;"><font style="font-size: 14px;"><span style="background-color: initial;" class="hljs-title function_ invoke__">set_phone</span><span style="background-color: initial;">(phone)&nbsp;</span></font></p><p style="margin: 0px 0px 0px 4px; font-size: 14px;"><font style="font-size: 14px;"><span class="hljs-title function_ invoke__">set_email</span>(email)&nbsp;</font></p><p style="margin: 0px 0px 0px 4px; font-size: 14px;"><font style="font-size: 14px;"><span style="" class="hljs-title function_ invoke__">set_telegram</span>(telegram)</font><br></p>" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" vertex="1" parent="1">
-<mxGeometry x="380" y="540" width="160" height="330" as="geometry"/>
-</mxCell>
-</root>
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+    <mxCell id="TWZeQBOpbCpTZb6lZ8-Y-5" value="PersonBase" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+      <mxGeometry x="20" y="200" width="160" height="270" as="geometry" />
+    </mxCell>
+    <mxCell id="TWZeQBOpbCpTZb6lZ8-Y-6" value="&lt;font style=&quot;font-size: 13px;&quot;&gt;id: String&lt;br&gt;surname_initials: String&lt;br&gt;git: String&lt;br&gt;phone: String&lt;br&gt;email: String&lt;br&gt;telegram: String&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="TWZeQBOpbCpTZb6lZ8-Y-5">
+      <mxGeometry y="26" width="160" height="114" as="geometry" />
+    </mxCell>
+    <mxCell id="TWZeQBOpbCpTZb6lZ8-Y-7" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" vertex="1" parent="TWZeQBOpbCpTZb6lZ8-Y-5">
+      <mxGeometry y="140" width="160" height="8" as="geometry" />
+    </mxCell>
+    <mxCell id="TWZeQBOpbCpTZb6lZ8-Y-8" value="&lt;font style=&quot;font-size: 13px;&quot;&gt;set_contacts(phone, email, telegram)&lt;br&gt;get_contact()&lt;br&gt;validate_contact()&lt;br&gt;set_phone(phone)&lt;br&gt;set_email(email)&lt;br&gt;set_telegram(telegram)&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="TWZeQBOpbCpTZb6lZ8-Y-5">
+      <mxGeometry y="148" width="160" height="122" as="geometry" />
+    </mxCell>
+    <mxCell id="TWZeQBOpbCpTZb6lZ8-Y-9" value="Student" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+      <mxGeometry x="330" y="360" width="160" height="190" as="geometry" />
+    </mxCell>
+    <mxCell id="TWZeQBOpbCpTZb6lZ8-Y-10" value="&lt;font style=&quot;font-size: 13px;&quot;&gt;surname: String&lt;br&gt;name: String&lt;br&gt;patronymic: String&lt;br&gt;git: String&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="TWZeQBOpbCpTZb6lZ8-Y-9">
+      <mxGeometry y="26" width="160" height="84" as="geometry" />
+    </mxCell>
+    <mxCell id="TWZeQBOpbCpTZb6lZ8-Y-11" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" vertex="1" parent="TWZeQBOpbCpTZb6lZ8-Y-9">
+      <mxGeometry y="110" width="160" height="8" as="geometry" />
+    </mxCell>
+    <mxCell id="TWZeQBOpbCpTZb6lZ8-Y-12" value="&lt;font style=&quot;font-size: 13px;&quot;&gt;initialize(id, surname, name, patronymic, git)&lt;br&gt;validate_fio()&lt;br&gt;getInfo()&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="TWZeQBOpbCpTZb6lZ8-Y-9">
+      <mxGeometry y="118" width="160" height="72" as="geometry" />
+    </mxCell>
+    <mxCell id="TWZeQBOpbCpTZb6lZ8-Y-17" value="Student_short" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+      <mxGeometry x="600" y="210" width="200" height="130" as="geometry" />
+    </mxCell>
+    <mxCell id="TWZeQBOpbCpTZb6lZ8-Y-20" value="&lt;font style=&quot;font-size: 13px;&quot;&gt;initialize(arg1, arg2=nil)&lt;br&gt;get_contact()&lt;br&gt;parse_surname_initials(info_str)&lt;br&gt;parse_git(info_str)&lt;br&gt;parse_contact(info_str)&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="TWZeQBOpbCpTZb6lZ8-Y-17">
+      <mxGeometry y="26" width="200" height="104" as="geometry" />
+    </mxCell>
+    <mxCell id="TWZeQBOpbCpTZb6lZ8-Y-21" value="" style="endArrow=classic;html=1;rounded=0;entryX=0.994;entryY=0.672;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="TWZeQBOpbCpTZb6lZ8-Y-10" target="TWZeQBOpbCpTZb6lZ8-Y-8">
+      <mxGeometry width="50" height="50" relative="1" as="geometry">
+        <mxPoint x="390" y="430" as="sourcePoint" />
+        <mxPoint x="440" y="380" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="TWZeQBOpbCpTZb6lZ8-Y-22" value="" style="endArrow=classic;html=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="TWZeQBOpbCpTZb6lZ8-Y-20" target="TWZeQBOpbCpTZb6lZ8-Y-6">
+      <mxGeometry width="50" height="50" relative="1" as="geometry">
+        <mxPoint x="390" y="430" as="sourcePoint" />
+        <mxPoint x="440" y="380" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+  </root>
 </mxGraphModel>
-</diagram>
-</mxfile>
+
