@@ -10,7 +10,7 @@ class PersonBase
 
   def set_contacts(phone: nil, email: nil, telegram: nil)
     set_phone(phone) unless phone.nil?
-    set_email(email) unless email.nil?
+    set_email(email) unless email.nil? 
     set_telegram(telegram) unless telegram.nil?
     validate_contact
   end
