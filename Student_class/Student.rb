@@ -10,25 +10,29 @@ class Student < PersonBase
     @surname = surname
     @patronymic = patronymic
     validate_fio
+	
   end
 
-  def getInfo
+  def get_full_info
     "#{surname_initials}; Git: #{git}; Связь: #{get_contact}"
   end
 
   def validate
-    raise ArgumentError, "Необходимо указать Git" if git.nil? || git.empty?
+  validate_git
     validate_fio
     validate_contact
   end
 
   private
-
+ def validate_git
+    raise ArgumentError, "Необходимо указать Git" if git.nil? || git.empty?
+  end
   # Валидация ФИО (фамилия, имя, отчество)
   def validate_fio
-    validate_name_part(@surname, 'Фамилия')
-    validate_name_part(@name, 'Имя')
-    validate_name_part(@patronymic, 'Отчество')
+    [@surname, @name, @patronymic].each_with_index do |name_part, index|
+      field_name = %w[Фамилия Имя Отчество][index]
+      validate_name_part(name_part, field_name)
+    end
   end
 
   # Валидация отдельной части ФИО (Фамилия, Имя, Отчество)
