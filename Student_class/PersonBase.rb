@@ -8,12 +8,37 @@ class PersonBase
     @git = git
   end
 
-  def set_contacts(phone: nil, email: nil, telegram: nil)
-    set_phone(phone) unless phone.nil?
-    set_email(email) unless email.nil? 
-    set_telegram(telegram) unless telegram.nil?
-    validate_contact
+  def set_contact(value, field)
+  # Хеш, связывающий поля с методами валидации
+  validators = {
+    phone: :valid_phone_number?,
+    email: :valid_email?,
+    telegram: :valid_telegram?
+  }
+
+  unless validators.keys.include?(field)
+    raise ArgumentError, "Неизвестное поле: #{field}"
   end
+
+  validator = self.class.method(validators[field])
+  
+  if value.nil? || validator.call(value)
+    instance_variable_set("@#{field}", value)
+  else
+    raise ArgumentError, "Недопустимый #{field}: #{value}"
+  end
+end
+
+
+
+def set_contacts(phone: nil, email: nil, telegram: nil)
+  set_contact(phone, :phone) unless phone.nil?
+  set_contact(email, :email) unless email.nil?
+  set_contact(telegram, :telegram) unless telegram.nil?
+  validate_contact
+end
+
+
 
   def get_contact
     contacts = []
@@ -25,34 +50,10 @@ class PersonBase
 
   private
 
-  def set_phone(value)
-    if value.nil? || self.class.valid_phone_number?(value)
-      @phone = value
-    else
-      raise ArgumentError, "Недопустимый номер телефона: #{value}"
-    end
-  end
-
-  def set_email(value)
-    if value.nil? || self.class.valid_email?(value)
-      @email = value
-    else
-      raise ArgumentError, "Недопустимый email: #{value}"
-    end
-  end
-
-  def set_telegram(value)
-    if value.nil? || self.class.valid_telegram?(value)
-      @telegram = value
-    else
-      raise ArgumentError, "Недопустимый Telegram: #{value}"
-    end
-  end
+  
 
   def validate_contact
-    if phone.nil? && email.nil? && telegram.nil?
-      raise ArgumentError, "Необходимо указать хотя бы один контакт: телефон, email или Телеграм"
-    end
+    raise ArgumentError, "Необходимо указать хотя бы один контакт: телефон, email или Телеграм" if [phone, email, telegram].all?(&:nil?)
   end
 
   # Статические методы для валидации
