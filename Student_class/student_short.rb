@@ -1,14 +1,13 @@
+# student_short.rb
+require_relative 'PersonBase'
+
 class Student_short < PersonBase
-
-  attr_reader :contact
-
   def initialize(student)
     unless student.is_a?(Student)
       raise ArgumentError, "Неверные аргументы для создания Student_short"
     end
 
     @student = student # Сохраняем ссылку на объект Student
-    @contact = student.get_contact
   end
 
   # Метод для получения id напрямую из объекта Student
@@ -28,6 +27,6 @@ class Student_short < PersonBase
 
   # Метод для получения контакта
   def get_contact
-    @contact || "Нет контактов"
+    @student.get_contact || "Нет контактов"
   end
-  end
+end
