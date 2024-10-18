@@ -27,7 +27,7 @@ class PersonBase
     validate_contacts
   end
 
-  private
+  
 
   # Валидационные методы для Git и ID
   def self.valid_git?(git)
@@ -37,7 +37,7 @@ class PersonBase
   def self.valid_id?(id)
     id.match?(/\A\d+\z/)  # Пример валидации, что ID состоит только из цифр
   end
-
+private
   # Валидация наличия контактов
   def validate_contacts
     raise ArgumentError, "Необходимо указать хотя бы один контакт: телефон, email или Телеграм" if @phone.nil? && @email.nil? && @telegram.nil?
