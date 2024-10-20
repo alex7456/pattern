@@ -1,27 +1,24 @@
-# main.rb
 require_relative 'PersonBase'
 require_relative 'Student'
 require_relative 'Student_short'
 
 begin
-  student1 = Student.new(id: '1', surname: 'Иванов', name: 'Иван', patronymic: 'Иванович', git: 'ivan123')
+  student1 = Student.new(id: '1', surname: 'Иванов', first_name: 'Иван', last_name: 'Иванович', git: 'ivan123')
   student1.set_contacts(phone: '111-222-333', telegram: 'ivan1234', email: 'ivan@mail.ru')
-  
 rescue ArgumentError => e
   puts e.message
 end
 
 begin
-  student2 = Student.new(id: '2', surname: 'Стройный', name: 'Александр', patronymic: 'Александрович', git: 'alex7456')
+  student2 = Student.new(id: '2', surname: 'Стройный', first_name: 'Александр', last_name: 'Александрович', git: 'alex7456')
   student2.set_contacts(telegram: 'alex7456')
-  
 rescue ArgumentError => e
   puts e.message
 end
 
 begin
-  student_short1 = Student_short.new(student2)
-  puts "Student_short1: ID=#{student_short1.id}, Surname Initials=#{student_short1.surname_initials}, Git=#{student_short1.git}, Contact=#{student_short1.get_contact}"
+  student_short1 = Student_short.new(student: student2)
+  puts "Student_short1: ID=#{student_short1.id}, FIO=#{student_short1.fio}, Git=#{student_short1.git}, Contact=#{student_short1.contact}"
 rescue ArgumentError => e
   puts e.message
 end
@@ -33,7 +30,7 @@ def print_student_info(student)
     return
   end
 
-  puts student.get_full_info
+  puts student.get_info
   puts "-" * 20
 end
 
