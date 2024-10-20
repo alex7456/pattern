@@ -1,32 +1,26 @@
-# student_short.rb
-require_relative 'PersonBase'
+require_relative 'Student'
 
 class Student_short < PersonBase
-  def initialize(student)
-    unless student.is_a?(Student)
-      raise ArgumentError, "Неверные аргументы для создания Student_short"
+  attr_reader :fio, :contact
+
+  def initialize(student: nil, id: nil, student_str: nil)
+    if student
+      super(id: student.id, git: student.git)
+      short_setter(student.get_info)
+    elsif id && student_str
+      super(id: id)
+      short_setter(student_str)
+    else
+      raise ArgumentError, "Invalid arguments for StudentShort"
     end
-
-    @student = student # Сохраняем ссылку на объект Student
   end
 
-  # Метод для получения id напрямую из объекта Student
-  def id
-    @student.id
-  end
+  private
 
-  # Метод для получения фамилии и инициалов напрямую
-  def surname_initials
-    @student.surname_initials
-  end
-
-  # Метод для получения git напрямую
-  def git
-    @student.git
-  end
-
-  # Метод для получения контакта
-  def get_contact
-    @student.get_contact || "Нет контактов"
+  def short_setter(info)
+    info_arr = info.split("\t")
+    set_attribute(:fio, info_arr[0])
+    set_attribute(:git, info_arr[1])
+    set_attribute(:contact, info_arr[2])
   end
 end
