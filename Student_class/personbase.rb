@@ -1,70 +1,47 @@
-# person_base.rb
 class PersonBase
-  attr_reader :id, :git, :phone, :email, :telegram
+  attr_reader :id, :git
 
-  # Установка id с валидацией
-  def id=(id)
-    validate_id(id)
-    @id = id
+  # Инициализация с установкой ID и Git
+  def initialize(id: nil, git: nil)
+    self.id = id.to_i unless id.nil?
+    set_attribute(:git, git) if git
   end
 
-  # Установка git с валидацией
-  def git=(git)
-    validate_git(git)
-    @git = git
+  def to_s
+    instance_variables.map do |key|
+      val = instance_variable_get(key)
+      key_name = key.to_s.delete_prefix('@')
+      "#{key_name}: #{val}" unless val.nil? || val.to_s.empty?
+    end.compact.join("\n")
   end
 
-  # Метод для установки контактов с валидацией
-  def set_contacts(phone: nil, email: nil, telegram: nil)
-    validate_contact(phone, 'телефон')
-    validate_contact(email, 'email')
-    validate_contact(telegram, 'телеграм')
+  private
 
-    @phone = phone
-    @email = email
-    @telegram = telegram
+  def set_attribute(attr_name, value)
+    regex_map = {
+      git: /\A[a-zA-Z0-9._-]+\z/,
+      email: /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i,
+      phone: /\A\d{1,3}-\d{3}-\d{3}\z/,
+      telegram: /\A[a-zA-Z0-9_]{5,}\z/,
+	  first_name: /\A[А-Яа-яЁёA-Za-z]+\z/,   
+      surname: /\A[А-Яа-яЁёA-Za-z]+\z/,    
+      last_name: /\A[А-Яа-яЁёA-Za-z]+\z/,
+	  fio: /\A[А-Яа-яЁёA-Za-z]+\s[А-Яа-яЁёA-Za-z]\.[А-Яа-яЁёA-Za-z]\.\z/,
+	  contact: /\A.+\z/
+    }
 
-    validate_contacts
-  end
+    regex = regex_map[attr_name]
+    raise ArgumentError, "Validation not defined for #{attr_name}" unless regex
 
-  
-
-  # Валидационные методы для Git и ID
-  def self.valid_git?(git)
-    git.match?(/\A[a-zA-Z0-9._-]+\z/)  # Пример валидации формата Git
-  end
-
-  def self.valid_id?(id)
-    id.match?(/\A\d+\z/)  # Пример валидации, что ID состоит только из цифр
-  end
-private
-  # Валидация наличия контактов
-  def validate_contacts
-    raise ArgumentError, "Необходимо указать хотя бы один контакт: телефон, email или Телеграм" if @phone.nil? && @email.nil? && @telegram.nil?
-  end
-
-  def validate_id(id)
-    raise ArgumentError, "Необходимо указать ID" if id.nil? || id.empty?
-  end
-
-  def validate_git(git)
-    raise ArgumentError, "Необходимо указать Git" if git.nil? || git.empty?
-    raise ArgumentError, "Недопустимый формат Git" unless self.class.valid_git?(git)
-  end
-
-  # Валидация контактов
-  def validate_contact(value, contact_type)
-    return if value.nil? || value.empty? # Если контакт не указан, пропускаем валидацию
-
-    case contact_type
-    when 'телефон'
-      raise ArgumentError, "Недопустимый формат телефона" unless value.match?(/\A\d{1,3}-\d{3}-\d{3}\z/)
-    when 'email'
-      raise ArgumentError, "Недопустимый формат email" unless value.match?(/\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i)
-    when 'телеграм'
-      raise ArgumentError, "Недопустимый формат Telegram" unless value.match?(/\A[a-zA-Z0-9_]{5,}\z/) 
+    if value.nil? || value.empty? || value.match?(regex)
+      instance_variable_set("@#{attr_name}", value)
     else
-      raise ArgumentError, "Неизвестный тип контакта"
+      raise ArgumentError, "Incorrect #{attr_name}: #{value}"
     end
+  end
+
+  def id=(id)
+    raise ArgumentError, "Invalid ID" if id.nil? || id.to_s.empty? || id.to_s.match?(/\D/)
+    @id = id
   end
 end
