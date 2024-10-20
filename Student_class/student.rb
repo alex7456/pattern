@@ -1,56 +1,40 @@
-# student.rb
 require_relative 'PersonBase'
-
 class Student < PersonBase
-  attr_reader :surname_initials
+  attr_reader :email, :phone, :telegram, :first_name, :surname, :last_name
 
-  def initialize(id:, git:, surname:, name:, patronymic:)
-    self.id = id  # Используем сеттер с валидацией
-    self.git = git  # Используем сеттер с валидацией
+  def initialize(first_name:, surname:, last_name:, phone: nil, telegram: nil, git:, email: nil, id: nil)
+    super(id: id, git: git)
+    raise "FIO required" if first_name.nil? || surname.nil? || last_name.nil?
 
-    # Валидация ФИО
-    validate_fio(surname, name, patronymic)
-
-    # Сохраняем фамилию с инициалами
-    @surname_initials = generate_initials(surname, name, patronymic)
-
-   
-  
+    set_attribute(:first_name, first_name) 
+    set_attribute(:surname, surname)
+    set_attribute(:last_name, last_name)
+    set_contacts(phone: phone, telegram: telegram, email: email)   
   end
 
-  def get_full_info
-    "#{surname_initials}; Git: #{git}; Связь: #{get_contact}"
+  def set_contacts(phone: nil, telegram: nil, email: nil)
+    set_attribute(:phone, phone) if phone
+    set_attribute(:telegram, telegram) if telegram
+    set_attribute(:email, email) if email
+  end
+
+  def get_info
+    fio = "#{@surname} #{initials}"
+    git_info = git.nil? ? "Git не задан" : git 
+    contact_info = get_contact
+
+    "#{fio}\t#{git_info}\t#{contact_info}"
+  end
+
+  def initials
+    "#{@first_name[0]}.#{@last_name[0]}."
   end
 
   def get_contact
     contact_info = []
-    contact_info << "Телефон: #{phone}" if phone
-    contact_info << "Email: #{email}" if email
-    contact_info << "Телеграм: #{telegram}" if telegram
+    contact_info << "Телефон: #{@phone}" if @phone
+    contact_info << "Email: #{@email}" if @email
+    contact_info << "Telegram: #{@telegram}" if @telegram
     contact_info.empty? ? "Нет контактов" : contact_info.join(", ")
-  end
-
-  private
-
-  def generate_initials(surname, name, patronymic)
-    "#{surname} #{name[0]}.#{patronymic[0]}."
-  end
-
-  # Валидация ФИО
-  def validate_fio(surname, name, patronymic)
-    { 'Фамилия' => surname, 'Имя' => name, 'Отчество' => patronymic }.each do |field_name, field_value|
-      validate_name_part(field_value, field_name)
-    end
-  end
-
-  # Валидация отдельных частей ФИО
-  def validate_name_part(name_part, field_name)
-    if name_part.nil? || name_part.strip.empty?
-      raise ArgumentError, "#{field_name} не может быть пустым"
-    end
-
-    unless name_part =~ /\A[А-Яа-яЁёA-Za-z]+\z/
-      raise ArgumentError, "#{field_name} должно содержать только буквы"
-    end
   end
 end
