@@ -41,6 +41,16 @@ def elements_between_first_and_last_max(data, input_type)
     puts "Максимальные элементы находятся в одном месте"
   end
 end
+# 4. Найти минимальный четный элемент
+def find_min_even(data, input_type)
+  array = get_array_input(data, input_type)
+  min_even = array.select(&:even?).min
+  if min_even
+    puts "Минимальный четный элемент: #{min_even}"
+  else
+    puts "Четных элементов нет"
+  end
+end
 
 # Вспомогательные методы для получения ввода
 def get_array_input(data, input_type)
