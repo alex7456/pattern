@@ -51,6 +51,15 @@ def find_min_even(data, input_type)
     puts "Четных элементов нет"
   end
 end
+# 5. Построить список простых делителей числа
+def prime_factors(data, input_type)
+  number = get_number_input(data, input_type)
+  factors = []
+  factorize(number) do |prime_factor|
+    factors << prime_factor
+  end
+  puts "Простые делители числа: #{factors.sort}"
+end
 
 # Вспомогательные методы для получения ввода
 def get_array_input(data, input_type)
@@ -59,5 +68,24 @@ def get_array_input(data, input_type)
     gets.chomp.split.map(&:to_i)
   else
     data # Если данные были из файла, они уже переданы
+  end
+end
+def get_number_input(data, input_type)
+  if input_type == :keyboard
+    puts "Введите число:"
+    gets.chomp.to_i
+  else
+    data.first # Если данные из файла, берем первое число
+  end
+end
+
+def factorize(n, &block)
+  factor = 2
+  while n > 1
+    while n % factor == 0
+      yield factor
+      n /= factor
+    end
+    factor += 1
   end
 end
