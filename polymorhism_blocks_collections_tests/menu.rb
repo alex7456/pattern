@@ -26,7 +26,7 @@ def main
   puts "1. Убывающая последовательность индексов"
    puts "2. Элементы между первым и вторым максимальными"
   puts "3. Элементы между первым и последним максимальными"
-  
+  puts "4. Минимальный четный элемент"
   choice = gets.chomp.to_i
 
   # Передаем прочитанные данные в зависимости от выбора задачи
@@ -37,6 +37,9 @@ def main
 	    elements_between_first_and_second_max(data, input_type)
   when 3
   elements_between_first_and_last_max(data,input_type)
+  when 4
+  find_min_even(data,input_type)
+  
 	end
 	end
 	
