@@ -18,6 +18,29 @@ def elements_between_first_and_second_max(data, input_type)
     puts "Невозможно найти элементы между первым и вторым максимальными, так как они расположены в некорректном порядке."
   end
 end
+def elements_between_first_and_last_max(data, input_type)
+  array = get_array_input(data, input_type)
+  max_val = array.max
+  idx1 = array.index(max_val)
+  idx2 = array.rindex(max_val)
+  if idx1 && idx2 && idx1 != idx2
+    puts "Элементы между первым и последним максимальными: #{array[(idx1+1)...idx2]}"
+  else
+    puts "Максимальные элементы находятся в одном месте"
+  end
+end
+# 3. Элементы между первым и последним максимальными
+def elements_between_first_and_last_max(data, input_type)
+  array = get_array_input(data, input_type)
+  max_val = array.max
+  idx1 = array.index(max_val)
+  idx2 = array.rindex(max_val)
+  if idx1 && idx2 && idx1 != idx2
+    puts "Элементы между первым и последним максимальными: #{array[(idx1+1)...idx2]}"
+  else
+    puts "Максимальные элементы находятся в одном месте"
+  end
+end
 
 # Вспомогательные методы для получения ввода
 def get_array_input(data, input_type)
