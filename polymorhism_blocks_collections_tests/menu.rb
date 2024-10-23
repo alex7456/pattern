@@ -25,7 +25,7 @@ def main
   puts "Выберите задачу: "
   puts "1. Убывающая последовательность индексов"
    puts "2. Элементы между первым и вторым максимальными"
-  
+  puts "3. Элементы между первым и последним максимальными"
   
   choice = gets.chomp.to_i
 
@@ -35,7 +35,8 @@ def main
     descending_indices(data, input_type)
 	when 2
 	    elements_between_first_and_second_max(data, input_type)
-
+  when 3
+  elements_between_first_and_last_max(data,input_type)
 	end
 	end
 	
