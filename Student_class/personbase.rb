@@ -1,10 +1,9 @@
 class PersonBase
   attr_reader :id, :git
-
-  # Инициализация с установкой ID и Git
+  
   def initialize(id: nil, git: nil)
     self.id = id.to_i unless id.nil?
-    set_attribute(:git, git) if git
+    self.git = git # Устанавливаем через сеттер, поэтому можно nil
   end
 
   def to_s
@@ -15,33 +14,37 @@ class PersonBase
     end.compact.join("\n")
   end
 
+  def git=(value)
+    set_attribute(:git, value)
+  end
+
+  def id=(value)
+    raise ArgumentError, "Invalid ID" if value.nil? || value.to_s.empty? || value.to_s.match?(/\D/)
+    @id = value.to_i
+  end
+
   private
 
   def set_attribute(attr_name, value)
     regex_map = {
-      git: /\A[a-zA-Z0-9._-]+\z/,
+      git: /\A[a-zA-Z0-9._-]*\z/,
       email: /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i,
       phone: /\A\d{1,3}-\d{3}-\d{3}\z/,
       telegram: /\A[a-zA-Z0-9_]{5,}\z/,
-	  first_name: /\A[А-Яа-яЁёA-Za-z]+\z/,   
-      surname: /\A[А-Яа-яЁёA-Za-z]+\z/,    
+      first_name: /\A[А-Яа-яЁёA-Za-z]+\z/,
+      surname: /\A[А-Яа-яЁёA-Za-z]+\z/,
       last_name: /\A[А-Яа-яЁёA-Za-z]+\z/,
-	  fio: /\A[А-Яа-яЁёA-Za-z]+\s[А-Яа-яЁёA-Za-z]\.[А-Яа-яЁёA-Za-z]\.\z/,
-	  contact: /\A.+\z/
+      fio: /\A[А-Яа-яЁёA-Za-z]+\s[А-Яа-яЁёA-Za-z]\.[А-Яа-яЁёA-Za-z]\.\z/,
+      contact: /\A.+\z/
     }
 
     regex = regex_map[attr_name]
     raise ArgumentError, "Validation not defined for #{attr_name}" unless regex
 
-    if value.nil? || value.empty? || value.match?(regex)
+    if value.nil? || value.match?(regex)
       instance_variable_set("@#{attr_name}", value)
     else
       raise ArgumentError, "Incorrect #{attr_name}: #{value}"
     end
-  end
-
-  def id=(id)
-    raise ArgumentError, "Invalid ID" if id.nil? || id.to_s.empty? || id.to_s.match?(/\D/)
-    @id = id
   end
 end
