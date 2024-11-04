@@ -20,3 +20,9 @@ chunk=[]
 
     result
   end
+def include?(value)
+@array.each do |item|
+return true if item==value 
+end
+false
+end
