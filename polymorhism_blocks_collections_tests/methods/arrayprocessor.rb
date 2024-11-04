@@ -33,3 +33,10 @@ def reduce(initial = nil)
     end
     accumulator
   end
+   def sum
+    total = 0
+    @array.each do |item|
+      total += item
+    end
+    total
+  end
