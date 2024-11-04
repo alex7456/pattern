@@ -40,3 +40,9 @@ def reduce(initial = nil)
     end
     total
   end
+  def member?(value)
+    @array.each do |item|
+      return true if item == value
+    end
+    false
+  end
