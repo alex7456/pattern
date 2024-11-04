@@ -46,3 +46,13 @@ def reduce(initial = nil)
     end
     false
   end
+  
+   def filter
+    result = []
+    @array.each do |item|
+      result << item if yield(item)
+    end
+    result
+  end
+end
+  
