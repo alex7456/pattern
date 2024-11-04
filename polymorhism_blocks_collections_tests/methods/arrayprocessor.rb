@@ -26,3 +26,10 @@ return true if item==value
 end
 false
 end
+def reduce(initial = nil)
+    accumulator = initial
+    @array.each do |item|
+      accumulator = accumulator.nil? ? item : yield(accumulator, item)
+    end
+    accumulator
+  end
