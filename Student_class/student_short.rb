@@ -1,4 +1,4 @@
-require_relative 'Student'
+
 class StudentShort < PersonBase
   attr_reader :fio, :contact
 
