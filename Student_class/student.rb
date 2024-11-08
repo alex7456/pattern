@@ -22,17 +22,6 @@ class Student < PersonBase
     set_attribute(:last_name, value)
   end
 
-  def email=(value)
-    set_attribute(:email, value)
-  end
-
-  def phone=(value)
-    set_attribute(:phone, value)
-  end
-
-  def telegram=(value)
-    set_attribute(:telegram, value)
-  end
 
   def set_contacts(phone: nil, telegram: nil, email: nil)
     self.phone = phone if phone
@@ -58,5 +47,17 @@ class Student < PersonBase
     contact_info << "Email: #{@email}" if @email
     contact_info << "Telegram: #{@telegram}" if @telegram
     contact_info.empty? ? "Нет контактов" : contact_info.join(", ")
+  end
+  private
+  def email=(value)
+    set_attribute(:email, value)
+  end
+
+  def phone=(value)
+    set_attribute(:phone, value)
+  end
+
+  def telegram=(value)
+    set_attribute(:telegram, value)
   end
 end
