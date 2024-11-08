@@ -24,4 +24,6 @@ class StudentShort < PersonBase
   def contact=(value)
     set_attribute(:contact, value)
   end
+
+  private_class_method :new
 end
