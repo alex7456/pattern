@@ -1,63 +1,107 @@
-require_relative 'PersonBase'
-class Student < PersonBase
-  attr_reader :email, :phone, :telegram, :first_name, :surname, :last_name
+class Student < Human
+  attr_reader :first_name, :surname, :last_name
 
-  def initialize(first_name:, surname:, last_name:, phone: nil, telegram: nil, git: nil, email: nil, id: nil)
-    super(id: id, git: git)
+  NAME_REGEX = /^[А-Яа-яЁёA-Za-z]+$/
+  EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
+  PHONE_REGEX = /^\d{1,3}-\d{3}-\d{3}$/
+  TELEGRAM_REGEX = /^@[a-zA-Z0-9_]{5,}$/
+
+  def initialize(first_name:, surname:, last_name:, email: nil, phone: nil, telegram: nil, id: nil, github: nil)
+    super(id: id, github: github)
     self.first_name = first_name
     self.surname = surname
     self.last_name = last_name
-    set_contacts(phone: phone, telegram: telegram, email: email)
+    set_contact(phone: phone, telegram: telegram, email: email)
+  end
+
+  def self.valid_name?(name)
+    name =~ NAME_REGEX
+  end
+
+  def self.valid_email?(email)
+    email =~ EMAIL_REGEX
+  end
+
+  def self.valid_phone?(phone)
+    phone =~ PHONE_REGEX
+  end
+
+  def self.valid_telegram?(telegram)
+    telegram =~ TELEGRAM_REGEX
   end
 
   def first_name=(value)
-    set_attribute(:first_name, value)
+    raise ArgumentError, "Invalid first name" unless self.class.valid_name?(value)
+    @first_name = value
   end
 
   def surname=(value)
-    set_attribute(:surname, value)
+    raise ArgumentError, "Invalid surname" unless self.class.valid_name?(value)
+    @surname = value
   end
 
   def last_name=(value)
-    set_attribute(:last_name, value)
+    raise ArgumentError, "Invalid last name" unless self.class.valid_name?(value)
+    @last_name = value
   end
 
-
-  def set_contacts(phone: nil, telegram: nil, email: nil)
+  def set_contact(phone: nil, telegram: nil, email: nil)
     self.phone = phone if phone
     self.telegram = telegram if telegram
     self.email = email if email
   end
 
-  def get_info
-    fio = "#{@surname} #{initials}"
-    git_info = git.nil? ? "Git не задан" : git 
-    contact_info = get_contact
-
-    "#{fio}\t#{git_info}\t#{contact_info}"
+  def contact
+    contacts = []
+    contacts << "Почта: #{@email}" if @email
+    contacts << "Телефон: #{@phone}" if @phone
+    contacts << "Телеграмм: #{@telegram}" if @telegram
+    contacts.join(", ")
   end
 
   def initials
-    "#{@first_name[0]}.#{@last_name[0]}."
+    "#{surname}#{first_name[0]}.#{last_name[0]}."
+  end
+  def get_info
+    info = []
+    info << "Инициалы:#{initials}"
+    info << "#{contact}" if contact
+    info << "Git:#{@github}" if @github
+    info.join(", ")
+  end
+  private def email=(value)
+    raise ArgumentError, "Invalid email" unless self.class.valid_email?(value)
+    @email = value
   end
 
-  def get_contact
-    contact_info = []
-    contact_info << "Телефон: #{@phone}" if @phone
-    contact_info << "Email: #{@email}" if @email
-    contact_info << "Telegram: #{@telegram}" if @telegram
-    contact_info.empty? ? "Нет контактов" : contact_info.join(", ")
-  end
-  private
-  def email=(value)
-    set_attribute(:email, value)
+  private def phone=(value)
+    raise ArgumentError, "Invalid phone" unless self.class.valid_phone?(value)
+    @phone = value
   end
 
-  def phone=(value)
-    set_attribute(:phone, value)
+  private def telegram=(value)
+    raise ArgumentError, "Invalid telegram" unless self.class.valid_telegram?(value)
+    @telegram = value
   end
 
-  def telegram=(value)
-    set_attribute(:telegram, value)
+  def contact_present?(contact)
+    !contact.nil? && !contact.empty?
+  end
+
+  def validate?
+    github_present?(@github) || contact_present?(contact)
+  end
+
+  def to_s
+    data = []
+    data << "id : #{@id}" if @id
+    data << "Фамилия: #{@surname}" if @surname
+    data << "Имя: #{@first_name}" if @first_name
+    data << "Отчество: #{@last_name}" if @last_name
+    data << "github: #{@github}" if @github
+    data << "telegram: #{@telegram}" if @telegram
+    data << "email: #{@email}" if @email
+    data << "Телефон: #{@phone}" if @phone
+    data.join("\n")
   end
 end
