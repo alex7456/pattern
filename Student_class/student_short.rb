@@ -1,28 +1,57 @@
-
-class StudentShort < PersonBase
+class StudentShort < Human
   attr_reader :fio, :contact
 
+  def initialize(fio:, contact:, id: nil, github: nil)
+    super(id: id, github: github)
+    @fio = fio
+    @contact = contact
+  end
+
+  def self.from_string(string)
+    data = {}
+    string.scan(/([^:;]+): ([^;]+)(?:;|$)/).each do |key, value|
+      key = key.strip.downcase
+      value = value.strip
+
+      case key
+      when "id"
+        data[:id] = value.to_i
+      when "инициалы"
+        data[:fio] = value
+      when "github"
+        data[:github] = value
+      when "контакт"
+        data[:contact] = value
+      end
+    end
+
+
+    raise ArgumentError, "Missing required data: :fio or :contact" unless data[:fio] && data[:contact]
+
+    new(**data)
+  end
+
+
   def self.from_student(student)
-    new(id: student.id, git: student.git, fio: "#{student.surname} #{student.initials}", contact: student.get_contact)
+    new(
+      fio: student.initials,
+      contact: student.contact,
+      id: student.id,
+      github: student.github
+    )
   end
 
-  def self.from_string(id:, student_str:)
-    info_arr = student_str.split("\t")
-    new(id: id, git: info_arr[1], fio: info_arr[0], contact: info_arr[2])
+  def to_s
+    data = []
+    data << "id: #{@id}" if id
+    data << "Инициалы: #{@fio}" if fio
+    data << @contact if contact
+    data << "Git: #{@github}" if github
+    data.join("; ")
   end
 
-  def initialize(id:, git: nil, fio:, contact: nil)
-    super(id: id, git: git)
-    self.fio = fio
-    self.contact = contact
-  end
-
-  def fio=(value)
-    set_attribute(:fio, value)
-  end
-
-  def contact=(value)
-    set_attribute(:contact, value)
+  def validate?
+    !github.nil? && !github.empty? && !contact.nil? && !contact.empty?
   end
 
   private_class_method :new
