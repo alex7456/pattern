@@ -1,36 +1,39 @@
 class Human
-  attr_reader :id, :github
-
-  GITHUB_REGEX = /^https?:\/\/github\.com\/[a-zA-Z0-9_-]+$/
+  attr_reader :id , :git
   ID_REGEX = /^\d+$/
-
-  def initialize(id: nil, github: nil)
+  GIT_REGEX = /^https?:\/\/github\.com\/[a-zA-Z0-9_-]+$/
+  def initialize(id:nil, git:nil)
     self.id = id if id
-    self.github = github if github
+    self.git = git if git
   end
+  private def id=(value)
+    if self.class.valid_id?(value)
+    @id = value
+    else
+      raise ArgumentError, "id is not valid"
+  end
+    end
+  private def git=(value)
+    if self.class.valid_git?(value)
+      @git = value
+      else raise ArgumentError, "git is not valid"
+    end
+
+    end
 
   def self.valid_id?(id)
-    id=~ID_REGEX
+     ID_REGEX.match?(id.to_s)
   end
-
-  def self.valid_github?(github)
-    github =~ GITHUB_REGEX
+  def self.valid_git?(git)
+    GIT_REGEX.match?(git)
   end
-
-  private def id=(value)
-    @id = value
-  end
-
-  private def github=(value)
-    @github = value
-  end
-  protected def github_present?(github)
-    !github.nil? && !github.empty?
-  end
-  protected def contact
-    raise(NotImplementedError)
+  protected def git_present?(git)
+    !git.nil? && !git.empty?
   end
   protected def validate?
-    raise(NotImplementedError)
+    raise NotImplementedError
   end
-end
+  protected def contact?
+    raise NotImplementedError
+  end
+  end
