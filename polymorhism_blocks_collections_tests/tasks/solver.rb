@@ -1,91 +1,81 @@
- #1. Убывающая последовательность индексов
-def descending_indices(data, input_type)
-  array = get_array_input(data, input_type)
-  result = array.each_with_index.sort_by { |val, index| -val }.map { |val, index| index }
-  puts "Индексы в порядке убывания значений: #{result}"
+# Индексы элементов в порядке убывания значений
+def descending_indices(arr)
+  arr.each_with_index.sort_by { |x, _| -x }.map { |_, i| i }
 end
-# 2. Элементы между первым и вторым максимальными
-def elements_between_first_and_second_max(data, input_type)
-  array = get_array_input(data, input_type)
-  max1, max2 = array.max(2)
 
-  idx1 = array.index(max1)  # Индекс первого максимального
-  idx2 = array.rindex(max2) # Индекс второго максимального
-  
-  if idx1 && idx2 && idx2 > idx1
-    puts "Элементы между первым и вторым максимальными: #{array[(idx1 + 1)...idx2]}"
-  else
-    puts "Невозможно найти элементы между первым и вторым максимальными, так как они расположены в некорректном порядке."
-  end
+# Элементы между первым и вторым максимальным
+def between_first_and_second_max(arr)
+  max_indices = arr.each_index.select { |i| arr[i] == arr.max }
+  return [] if max_indices.size < 2
+
+  arr[(max_indices[0] + 1)...max_indices[1]]
 end
-def elements_between_first_and_last_max(data, input_type)
-  array = get_array_input(data, input_type)
-  max_val = array.max
-  idx1 = array.index(max_val)
-  idx2 = array.rindex(max_val)
-  if idx1 && idx2 && idx1 != idx2
-    puts "Элементы между первым и последним максимальными: #{array[(idx1+1)...idx2]}"
-  else
-    puts "Максимальные элементы находятся в одном месте"
-  end
+
+# Элементы между первым и последним максимальным
+def between_first_and_last_max(arr)
+  max_indices = arr.each_index.select { |i| arr[i] == arr.max }
+  return [] if max_indices.size < 2
+
+  arr[(max_indices.first + 1)...max_indices.last]
 end
-# 3. Элементы между первым и последним максимальными
-def elements_between_first_and_last_max(data, input_type)
-  array = get_array_input(data, input_type)
-  max_val = array.max
-  idx1 = array.index(max_val)
-  idx2 = array.rindex(max_val)
-  if idx1 && idx2 && idx1 != idx2
-    puts "Элементы между первым и последним максимальными: #{array[(idx1+1)...idx2]}"
-  else
-    puts "Максимальные элементы находятся в одном месте"
-  end
+
+# Минимальный четный элемент
+def min_even(arr)
+  evens = arr.select(&:even?)
+  evens.min || "Нет четных элементов"
 end
-# 4. Найти минимальный четный элемент
-def find_min_even(data, input_type)
-  array = get_array_input(data, input_type)
-  min_even = array.select(&:even?).min
-  if min_even
-    puts "Минимальный четный элемент: #{min_even}"
-  else
-    puts "Четных элементов нет"
-  end
-end
-# 5. Построить список простых делителей числа
-def prime_factors(data, input_type)
-  number = get_number_input(data, input_type)
+
+# Список простых делителей числа
+def prime_factors(n)
   factors = []
-  factorize(number) do |prime_factor|
-    factors << prime_factor
-  end
-  puts "Простые делители числа: #{factors.sort}"
-end
-
-# Вспомогательные методы для получения ввода
-def get_array_input(data, input_type)
-  if input_type == :keyboard
-    puts "Введите элементы массива через пробел:"
-    gets.chomp.split.map(&:to_i)
-  else
-    data # Если данные были из файла, они уже переданы
-  end
-end
-def get_number_input(data, input_type)
-  if input_type == :keyboard
-    puts "Введите число:"
-    gets.chomp.to_i
-  else
-    data.first # Если данные из файла, берем первое число
-  end
-end
-
-def factorize(n, &block)
-  factor = 2
+  divisor = 2
   while n > 1
-    while n % factor == 0
-      yield factor
-      n /= factor
+    while (n % divisor).zero?
+      factors << divisor
+      n /= divisor
     end
-    factor += 1
+    divisor += 1
+    break if divisor * divisor > n
+  end
+  factors << n if n > 1
+  factors
+end
+
+loop do
+  puts "Выберите, что нужно выполнить:"
+  puts "1. Вывести индексы массива в порядке убывания элементов"
+  puts "2. Найти элементы между первым и вторым максимальным"
+  puts "3. Найти элементы между первым и последним максимальным"
+  puts "4. Найти минимальный четный элемент"
+  puts "5. Построить список всех простых делителей числа"
+  puts "0. Выход"
+  choice = gets.chomp.to_i
+
+  case choice
+  when 1
+    puts "Введите элементы массива через пробел"
+    arr = gets.chomp.split.map(&:to_i)
+    puts "Индексы в порядке убывания: #{descending_indices(arr)}"
+  when 2
+    puts "Введите элементы массива через пробел"
+    arr = gets.chomp.split.map(&:to_i)
+    puts "Элементы между первым и вторым максимальным: #{between_first_and_second_max(arr)}"
+  when 3
+    puts "Введите элементы массива через пробел"
+    arr = gets.chomp.split.map(&:to_i)
+    puts "Элементы между первым и последним максимальным: #{between_first_and_last_max(arr)}"
+  when 4
+    puts "Введите элементы массива через пробел"
+    arr = gets.chomp.split.map(&:to_i)
+    puts "Минимальный четный элемент: #{min_even(arr)}"
+  when 5
+    puts "Введите число"
+    n = gets.chomp.to_i
+    puts "Простые делители числа: #{prime_factors(n)}"
+  when 0
+    puts "Завершение программы"
+    break
+  else
+    puts "Неправильное значение"
   end
 end
