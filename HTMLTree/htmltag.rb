@@ -1,20 +1,48 @@
+
 class HtmlTag
-  attr_reader :name, :children, :parent
+  attr_accessor :name, :attributes, :children
 
-  def initialize(name)
+  def initialize(name, attributes = {})
     @name = name
+    @attributes = attributes
     @children = []
-    @parent = nil
   end
 
-  # Метод для добавления дочернего элемента
-  def add_child(child)
-    child.set_parent(self) # Устанавливаем родителя
-    @children << child
+  # Добавление вложенного узла
+  def add_child(tag)
+    @children << tag
   end
 
-  # Метод для установки родителя (приватный)
-  def set_parent(parent)
-    @parent = parent
+  # Количество всех наследников первого уровня вложенности
+  def count_children
+    @children.size
+  end
+
+  # Проверка на принадлежность элемента классу
+  def has_class?(class_name)
+    classes = @attributes['class']&.split(' ') || []
+    classes.include?(class_name)
+  end
+
+  # Проверка на наличие вложенных элементов
+  def has_children?
+    !@children.empty?
+  end
+
+  # Переопределение to_s
+  def to_s
+    "<#{@name}#{attributes_string}>#{children_string}</#{@name}>"
+  end
+
+  private
+
+  # Преобразование всех атрибутов в одну строку
+  def attributes_string
+    @attributes.map { |k, v| " #{k}=\"#{v}\"" }.join('')
+  end
+
+  # Преобразование всех вложенных элементов в одну строку
+  def children_string
+    @children.map(&:to_s).join
   end
 end
