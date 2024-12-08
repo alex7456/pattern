@@ -1,107 +1,131 @@
 class Student < Human
-  attr_reader :first_name, :surname, :last_name
-
+  include Comparable
+  attr_reader :first_name, :surname, :last_name, :birthdate
   NAME_REGEX = /^[А-Яа-яЁёA-Za-z]+$/
   EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
   PHONE_REGEX = /^\d{1,3}-\d{3}-\d{3}$/
   TELEGRAM_REGEX = /^@[a-zA-Z0-9_]{5,}$/
+  DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/
+  def initialize(first_name: , surname: , last_name: ,email:nil,phone:nil,telegram:nil,id:nil,git:nil,birthdate:nil)
+    super(id: id, git:git)
+    self.first_name = first_name if first_name
+    self.surname = surname if surname
+    self.last_name = last_name if last_name
+    self.birthdate = birthdate if birthdate
+    set_contact(email:email,phone: phone, telegram: telegram)
 
-  def initialize(first_name:, surname:, last_name:, email: nil, phone: nil, telegram: nil, id: nil, github: nil)
-    super(id: id, github: github)
-    self.first_name = first_name
-    self.surname = surname
-    self.last_name = last_name
-    set_contact(phone: phone, telegram: telegram, email: email)
+
   end
-
   def self.valid_name?(name)
     name =~ NAME_REGEX
   end
-
   def self.valid_email?(email)
     email =~ EMAIL_REGEX
   end
-
   def self.valid_phone?(phone)
     phone =~ PHONE_REGEX
   end
-
   def self.valid_telegram?(telegram)
     telegram =~ TELEGRAM_REGEX
   end
-
+  def self.valid_birthdate?(birthdate)
+    birthdate =~ DATE_REGEX
+  end
   def first_name=(value)
-    raise ArgumentError, "Invalid first name" unless self.class.valid_name?(value)
-    @first_name = value
+    if self.class.valid_name?(value)
+      @first_name = value
+    else
+      raise ArgumentError, "Invalid first name"
+    end
   end
-
-  def surname=(value)
-    raise ArgumentError, "Invalid surname" unless self.class.valid_name?(value)
-    @surname = value
-  end
-
   def last_name=(value)
-    raise ArgumentError, "Invalid last name" unless self.class.valid_name?(value)
-    @last_name = value
-  end
+    if self.class.valid_name?(value)
+      @last_name = value
 
-  def set_contact(phone: nil, telegram: nil, email: nil)
-    self.phone = phone if phone
-    self.telegram = telegram if telegram
-    self.email = email if email
-  end
+   else
+    raise ArgumentError, "Invalid last name"
+   end
 
-  def contact
-    contacts = []
-    contacts << "Почта: #{@email}" if @email
-    contacts << "Телефон: #{@phone}" if @phone
-    contacts << "Телеграмм: #{@telegram}" if @telegram
-    contacts.join(", ")
-  end
 
-  def initials
-    "#{surname}#{first_name[0]}.#{last_name[0]}."
+end
+  def birthdate=(value)
+    if self.class.valid_birthdate?(value)
+      @birthdate = value
+    else
+      raise ArgumentError, "Invalid birthdate"
+    end
   end
-  def get_info
-    info = []
-    info << "Инициалы:#{initials}"
-    info << "#{contact}" if contact
-    info << "Git:#{@github}" if @github
-    info.join(", ")
+  def surname=(value)
+    if self.class.valid_name?(value)
+      @surname = value
+    else
+      raise ArgumentError, "Invalid surname"
+      end
   end
   private def email=(value)
-    raise ArgumentError, "Invalid email" unless self.class.valid_email?(value)
-    @email = value
+    if self.class.valid_email?(value)
+      @email = value
+    else
+      raise ArgumentError, "Invalid email"
   end
-
+  end
   private def phone=(value)
-    raise ArgumentError, "Invalid phone" unless self.class.valid_phone?(value)
-    @phone = value
+    if self.class.valid_phone?(value)
+      @phone = value
+    else
+      raise ArgumentError, "Invalid phone"
+    end
   end
-
   private def telegram=(value)
-    raise ArgumentError, "Invalid telegram" unless self.class.valid_telegram?(value)
-    @telegram = value
+    if self.class.valid_telegram?(value)
+      @telegram = value
+    else
+      raise ArgumentError, "Invalid telegram"
+      end
   end
-
+  def set_contact(email: nil, phone: nil, telegram: nil)
+    self.email = email if email
+    self.phone = phone if phone
+    self.telegram = telegram if telegram
+  end
+  def initials
+    "#{surname}#{first_name[0]}. #{last_name[0]}."
+  end
+  def contact
+    contacts = []
+    contacts << "Email: #{@email}" if @email
+    contacts << "Phone: #{@phone}" if @phone
+    contacts << "Telegram: #{@telegram}" if @telegram
+    contacts.join(",")
+  end
   def contact_present?(contact)
     !contact.nil? && !contact.empty?
   end
-
   def validate?
-    github_present?(@github) || contact_present?(contact)
+    git_present?(@git) || contact_present?(contact)
   end
 
   def to_s
     data = []
-    data << "id : #{@id}" if @id
-    data << "Фамилия: #{@surname}" if @surname
-    data << "Имя: #{@first_name}" if @first_name
-    data << "Отчество: #{@last_name}" if @last_name
-    data << "github: #{@github}" if @github
-    data << "telegram: #{@telegram}" if @telegram
+    data << "ID: #{@id}" if id
+    data << "firstName: #{@first_name}" if first_name
+    data << "surname: #{@surname}" if surname
+    data << "lastName: #{@last_name}" if last_name
     data << "email: #{@email}" if @email
-    data << "Телефон: #{@phone}" if @phone
+    data << "phone: #{@phone}" if @phone
+    data << "telegram: #{@telegram}" if @telegram
+    data << "Git: #{@git}" if git
+    data << "Birthdate: #{@birthdate}" if birthdate
     data.join("\n")
+
   end
-end
+  def <=>(other)
+    if self.birthdate < other.birthdate
+      return -1
+    elsif self.birthdate == other.birthdate
+      return 0
+    else
+      return 1
+    end
+  end
+  end
