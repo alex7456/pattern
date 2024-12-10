@@ -1,6 +1,7 @@
 class DataList
   def initialize(elements)
     self.data = elements
+    @extract_names = extract_names
     @selected=[]
   end
   def select(number)
@@ -11,16 +12,20 @@ class DataList
 
   end
   def get_selected
-@selected.map(&:id)
+    @selected.dup
   end
+
+
   def get_data
     rows = data.map.with_index(1) { |element, index| extract_data(element, index) }
     Data_table.new(rows)
   end
   def get_names
-    extract_names
+    @extract_names
   end
-
+  def to_s
+    @data.inspect
+  end
   protected
   attr_reader :data
   attr_accessor :selected
