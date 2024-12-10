@@ -4,7 +4,7 @@ class DataList
     @selected=[]
   end
   def select(number)
-    raise IndexError, "Invalid number" unless number.between?(0, data.size - 1)
+    raise IndexError, "Invalid number" unless self.valid_index?(number)
 
     @selected << data[number]
     @selected.uniq
@@ -14,13 +14,20 @@ class DataList
 @selected.map(&:id)
   end
   def get_data
-    raise NotImplementedError
+    rows = data.map.with_index(1) { |element, index| extract_data(element, index) }
+    Data_table.new(rows)
   end
   def get_names
-    raise NotImplementedError
+    extract_names
   end
-  private
+
+  protected
   attr_reader :data
+  attr_accessor :selected
+
+  def valid_index?(number)
+    number.between?(0, self.data.size - 1)
+  end
 
   def data=(data)
     @data = data.map { |element| deep_dup(element) }
@@ -35,6 +42,13 @@ class DataList
         element
       end
     end
+  end
+  def extract_names
+    raise NotImplementedError, "Must implement extract_names in subclass"
+  end
+
+  def extract_data(element, index)
+    raise NotImplementedError, "Must implement extract_data in subclass"
   end
 
 end
