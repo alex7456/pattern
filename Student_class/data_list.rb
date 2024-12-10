@@ -4,7 +4,7 @@ class DataList
     @extract_names = extract_names
     @selected=[]
   end
-  def select(number)
+  def select(number) 
     raise IndexError, "Invalid number" unless self.valid_index?(number)
 
     @selected << data[number]
