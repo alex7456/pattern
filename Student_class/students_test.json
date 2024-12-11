@@ -1,0 +1,24 @@
+[
+  {
+    "id": 1,
+    "first_name": "Иван",
+    "last_name": "Иванов",
+    "surname": "Иванович",
+    "phone": "111-222-333",
+    "telegram": "@ivanov",
+    "email": "ivanov@ya.ru",
+    "git": "https://github.com/ivanov",
+    "birthdate": "2000-05-15"
+  },
+  {
+    "id": 2,
+    "first_name": "Петр",
+    "last_name": "Петров",
+    "surname": "Петрович",
+    "phone": "222-333-444",
+    "telegram": "@petrov",
+    "email": "petrov@ya.ru",
+    "git": "https://github.com/petrov",
+    "birthdate": "1998-08-20"
+  }
+]
