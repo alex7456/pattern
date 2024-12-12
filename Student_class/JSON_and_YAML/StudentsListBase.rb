@@ -1,20 +1,21 @@
 class StudentsListBase
   attr_reader :students
 
-  def initialize(file_path)
+  def initialize(file_path, strategy)
     @file_path = file_path
+    @strategy = strategy
     @students = []
     load_from_file
   end
 
-  # Загрузка данных (определяется в подклассах)
+  # Загрузка данных
   def load_from_file
-    raise NotImplementedError, 'Этот метод должен быть реализован в подклассе'
+    @students = @strategy.load(@file_path)
   end
 
-  # Сохранение данных (определяется в подклассах)
+  # Сохранение данных
   def save_to_file
-    raise NotImplementedError, 'Этот метод должен быть реализован в подклассе'
+    @strategy.save(@file_path, @students)
   end
 
   # Найти студента по ID
