@@ -1,4 +1,4 @@
-class StudentsListYAML < StudentsListBase
+ class StudentsListYAML < StudentsListBase
   def load_from_file
     if File.exist?(@file_path)
       file_content = File.read(@file_path)
