@@ -4,7 +4,7 @@ html = "
 <html>
 	<body>
 		<div class=\"container\">
-			<p>Hello, world!</p>
+			<p></p>
 		</div>
 		<div>
 		</div>
@@ -21,3 +21,6 @@ puts "\nВывод всех элементов дерева с помощью о
 tree.each{|node| puts node}
 puts "\nМетод has_children для всех элементов дерева: "
 tree.each{|node| puts "#{node.name}: #{node.has_children?}"}
+puts "\nSelect:"
+selected_nodes = tree.select { |node| node.name == 'div' }
+selected_nodes.each { |node| puts "Tag: #{node.name}" }
