@@ -22,8 +22,9 @@ end
 # Минимальный четный элемент
 def min_even(arr)
   evens = arr.select(&:even?)
-  evens.min || "Нет четных элементов"
+  evens.min
 end
+
 
 # Список простых делителей числа
 def prime_factors(n)
