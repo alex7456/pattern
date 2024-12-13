@@ -30,7 +30,6 @@ class StudentTree
   end
 
   private def add_node(current, new_node)
-    # Используем переопределенный оператор "<=>"
     if new_node.student < current.student
       if current.left.nil?
         current.left = new_node
@@ -46,7 +45,7 @@ class StudentTree
     end
   end
 
-  # Подмешивание Enumerable
+
   def each(&block)
     traverse(@root, &block)
   end
