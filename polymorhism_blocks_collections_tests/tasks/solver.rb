@@ -1,11 +1,16 @@
 # Индексы элементов в порядке убывания значений
 def descending_indices(arr)
-  arr.each_with_index.sort_by { |x, _| -x }.map { |_, i| i }
+  result = arr.each_with_index.to_a
+  
+
+  result.sort_by { |x, _| -x }.map { |_, i| i }
 end
+
 
 # Элементы между первым и вторым максимальным
 def between_first_and_second_max(arr)
   max_indices = arr.each_index.select { |i| arr[i] == arr.max }
+  puts "#{arr.each_index.to_a}"
   return [] if max_indices.size < 2
 
   arr[(max_indices[0] + 1)...max_indices[1]]
@@ -22,7 +27,8 @@ end
 # Минимальный четный элемент
 def min_even(arr)
   evens = arr.select(&:even?)
-  evens.min
+  evens.empty? ? nil : evens.min
+
 end
 
 
