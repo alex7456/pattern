@@ -13,6 +13,8 @@ require_relative 'StudentsListBase'
 require_relative 'JSONStrategy'
 require_relative 'YAMLStrategy'
 require_relative 'file_strategy'
+require_relative './Database/Connection'
+require 'pg'
 # Создаем тестовые данные студентов
 student1 = Student.new(first_name: "Иван", surname: "Иванов", last_name: "Иванович", birthdate: "2000-05-15")
 student2 = Student.new(first_name: "Петр", surname: "Петров", last_name: "Петрович", birthdate: "1998-08-20")
@@ -70,3 +72,13 @@ yaml_list.students.each { |student| puts student }
 puts "\nСортировка студентов из YAML по фамилии:"
 yaml_list.sort_by_initials!
 yaml_list.students.each { |student| puts "#{student.surname} #{student.first_name} #{student.last_name}" }
+
+begin
+  con = Connection.new(host: 'localhost', username: 'postgres', password: '12345', database: 'postgres')
+  result = con.execute_query('SELECT * FROM student')
+  result.each { |row| puts row }
+rescue PG::Error => e
+  puts "Ошибка подключения: #{e.message}"
+ensure
+  con.close if con
+end
