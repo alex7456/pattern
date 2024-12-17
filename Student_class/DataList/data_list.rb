@@ -4,8 +4,8 @@ class DataList
     @extract_names = extract_names
     @selected=[]
   end
-  def select(number) 
-    raise IndexError, "Invalid number" unless self.valid_index?(number)
+  def select(number)
+    raise IndexError, "Invalid number" unless self.class.valid_index?(number,data)
 
     @selected << data[number]
     @selected.uniq
@@ -26,12 +26,13 @@ class DataList
   def to_s
     @data.inspect
   end
-  protected
   attr_reader :data
+
+  protected
   attr_accessor :selected
 
-  def valid_index?(number)
-    number.between?(0, self.data.size - 1)
+  def self.valid_index?(number,data)
+    number.between?(0, data.size - 1)
   end
 
   def data=(data)
