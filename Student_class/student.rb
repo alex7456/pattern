@@ -1,3 +1,4 @@
+require_relative 'Human'
 class Student < Human
   include Comparable
   attr_reader :first_name, :surname, :last_name, :birthdate
@@ -105,6 +106,21 @@ end
     git_present?(@git) || contact_present?(contact)
   end
 
+  def self.from_hash(hash)
+    id = hash[:id]&.to_i
+    last_name = hash[:last_name]&.strip
+    first_name = hash[:first_name]&.strip
+    surname = hash[:surname]&.strip
+    phone = hash[:phone]&.strip&.empty? ? nil : hash[:phone]&.strip
+    telegram = hash[:telegram]&.strip&.empty? ? nil : hash[:telegram]&.strip
+    email = hash[:email]&.strip&.empty? ? nil : hash[:email]&.strip
+    git = hash[:git]&.strip&.empty? ? nil : hash[:git]&.strip
+    birthdate = hash[:birthdate]&.strip&.empty? ? nil : Date.parse(hash[:birthdate].strip)
+    new(id: id, last_name: last_name, first_name: first_name, surname: surname, phone: phone, telegram: telegram, email: email, git: git, birthdate: birthdate)
+  rescue ArgumentError => e
+    raise "Ошибка: #{e.message}"
+  end
+  
   def to_s
     data = []
     data << "ID: #{@id}" if id
