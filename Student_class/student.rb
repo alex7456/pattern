@@ -1,10 +1,10 @@
 require_relative 'Human'
 class Student < Human
   include Comparable
-  attr_reader :first_name, :surname, :last_name, :birthdate
+  attr_reader :first_name, :surname, :last_name, :birthdate, :phone, :email,:telegram
   NAME_REGEX = /^[А-Яа-яЁёA-Za-z]+$/
   EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
-  PHONE_REGEX = /^\d{1,3}-\d{3}-\d{3}$/
+  PHONE_REGEX = /^\+?\d{11,15}$/
   TELEGRAM_REGEX = /^@[a-zA-Z0-9_]{5,}$/
   DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/
   def initialize(first_name: , surname: , last_name: ,email:nil,phone:nil,telegram:nil,id:nil,git:nil,birthdate:nil)
@@ -120,7 +120,7 @@ end
   rescue ArgumentError => e
     raise "Ошибка: #{e.message}"
   end
-  
+
   def to_s
     data = []
     data << "ID: #{@id}" if id
