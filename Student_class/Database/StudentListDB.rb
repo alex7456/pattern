@@ -4,6 +4,19 @@ require_relative '../DataList/data_list_student_short'
 require_relative '../Database/connection'
 
 class Students_list_DB
+  @instance = nil
+
+  # Метод класса для получения единственного экземпляра
+  def self.instance(db_connection = nil)
+    return @instance if @instance
+
+    raise 'DB connection is required for the first initialization' if db_connection.nil?
+
+    @instance = new(db_connection)
+  end
+
+  private_class_method :new
+
   def initialize(db_connection)
     @db = db_connection
   end
