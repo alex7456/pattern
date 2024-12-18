@@ -26,7 +26,7 @@ student4 = Student.new(first_name: "Мария", surname: "Сидорова", la
 # Подключение к базе данных
 begin
   db = Connection.new(host: 'localhost', username: 'postgres', password: '12345', database: 'postgres')
-  student_db = Students_list_DB.new(db)
+  student_db = Students_list_DB.instance(db)
 
   puts "\n=== Тестирование метода add_student ==="
   student_db.add_student(student1)
