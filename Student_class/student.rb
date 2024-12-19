@@ -1,4 +1,6 @@
 require_relative 'Human'
+require 'date'
+
 class Student < Human
   include Comparable
   attr_reader :first_name, :surname, :last_name, :birthdate, :phone, :email,:telegram
@@ -90,8 +92,10 @@ end
     self.telegram = telegram if telegram
   end
   def initials
-    "#{surname}#{first_name[0]}. #{last_name[0]}."
+    "#{surname}#{first_name.is_a?(String) ? first_name[0]&.upcase : ''}. #{last_name.is_a?(String) ? last_name[0]&.upcase : ''}."
   end
+
+
   def contact
     contacts = []
     contacts << "Email: #{@email}" if @email
@@ -111,15 +115,44 @@ end
     last_name = hash[:last_name]&.strip
     first_name = hash[:first_name]&.strip
     surname = hash[:surname]&.strip
-    phone = hash[:phone]&.strip&.empty? ? nil : hash[:phone]&.strip
-    telegram = hash[:telegram]&.strip&.empty? ? nil : hash[:telegram]&.strip
-    email = hash[:email]&.strip&.empty? ? nil : hash[:email]&.strip
-    git = hash[:git]&.strip&.empty? ? nil : hash[:git]&.strip
-    birthdate = hash[:birthdate]&.strip&.empty? ? nil : Date.parse(hash[:birthdate].strip)
-    new(id: id, last_name: last_name, first_name: first_name, surname: surname, phone: phone, telegram: telegram, email: email, git: git, birthdate: birthdate)
-  rescue ArgumentError => e
-    raise "Ошибка: #{e.message}"
+    phone = normalize_contact(hash[:phone])
+    telegram = normalize_contact(hash[:telegram])
+    email = normalize_contact(hash[:email])
+    git = normalize_contact(hash[:git])
+    birthdate = parse_birthdate(hash[:birthdate])
+
+    new(
+      id: id,
+      last_name: last_name,
+      first_name: first_name,
+      surname: surname,
+      phone: phone,
+      telegram: telegram,
+      email: email,
+      git: git,
+      birthdate: birthdate
+    )
   end
+
+  private
+
+  # Метод для нормализации контактов
+  def self.normalize_contact(value)
+    return nil if value.nil? || value.strip.empty?
+    value.strip
+  end
+
+  # Метод для обработки даты рождения
+  def self.parse_birthdate(value)
+    return nil if value.nil? || value.strip.empty? # Проверка на nil и пустую строку
+
+    begin
+      Date.parse(value.strip)
+    rescue ArgumentError => e
+      raise "Ошибка в формате даты: #{e.message}"
+    end
+  end
+
 
   def to_s
     data = []
