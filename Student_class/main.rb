@@ -15,6 +15,9 @@ require_relative 'YAMLStrategy'
 require_relative 'file_strategy'
 require_relative './Database/Connection'
 require_relative './Database/StudentListDB'
+require_relative './DataStructure/student_list_adapter'
+require_relative './DataStructure/student_list_adapter_DB'
+require_relative './DataStructure/listadapter'
 require 'pg'
 
 # Создаем тестовые данные студентов
@@ -23,37 +26,31 @@ student2 = Student.new(first_name: "Петр", surname: "Петров", last_nam
 student3 = Student.new(first_name: "Алексей", surname: "Алексеев", last_name: "Алексеевич", birthdate: "2002-03-10")
 student4 = Student.new(first_name: "Мария", surname: "Сидорова", last_name: "Александровна", birthdate: "1997-12-31")
 
-# Подключение к базе данных
+# Работа с адаптером базы данных
+puts "\n=== Тестирование адаптера базы данных ==="
 begin
-  db = Connection.new(host: 'localhost', username: 'postgres', password: '12345', database: 'postgres')
-  student_db = Students_list_DB.instance(db)
+  db_config = { host: 'localhost', user: 'postgres', password: '12345', dbname: 'postgres' }
+  db_adapter = Students_list_db_adapter.new(db_config)
+  list_adapter = List_adapter.new(db_adapter)
 
-  puts "\n=== Тестирование метода add_student ==="
-  student_db.add_student(student1)
-  student_db.add_student(student2)
-  student_db.add_student(student3)
-  student_db.add_student(student4)
-  puts "Студенты успешно добавлены в базу данных."
+  # Добавление студентов
+  puts "\nДобавление студентов в базу данных через адаптер:"
+  list_adapter.add_student(student1)
+  list_adapter.add_student(student2)
+  list_adapter.add_student(student3)
+  puts "Студенты успешно добавлены."
 
-  puts "\n=== Тестирование метода get_student_count ==="
-  count = student_db.get_student_count
-  puts "Количество студентов в базе данных: #{count}"
+  # Получение количества студентов
+  puts "\nКоличество студентов в базе данных:"
+  puts list_adapter.get_student_short_count
 
-  puts "\n=== Тестирование метода find_student_by_id ==="
-  student = student_db.find_student_by_id(1)
-  if student
-    puts "Студент с ID 1 найден:"
-    puts student
-  else
-    puts "Студент с ID 1 не найден."
-  end
-
-  puts "\n=== Тестирование метода get_k_n_student_short_list ==="
-  short_list = student_db.get_k_n_student_short_list(1, 2) # Получаем первых двух студентов
-  puts "Краткий список студентов (2 студента):"
+  # Получение краткого списка студентов
+  puts "\nКраткий список студентов (2 студента):"
+  short_list = list_adapter.get_k_n_student_short_list(1, 2)
   short_list.data.each { |student_short| puts student_short }
 
-  puts "\n=== Тестирование метода update_student_by_id ==="
+  # Обновление студента
+  puts "\nОбновление студента с ID 1:"
   updated_student = Student.new(
     first_name: "Александр",
     surname: "Смирнов",
@@ -62,59 +59,88 @@ begin
     phone: "+79150482266",
     email: "alexandr@example.com"
   )
-  student_db.update_student_by_id(1, updated_student)
-  puts "Студент с ID 1 обновлен."
+  list_adapter.update_student_by_id(1, updated_student)
 
-  puts "\n=== Проверка обновленного студента ==="
-  updated = student_db.find_student_by_id(1)
-  puts updated
+  # Проверка обновленного студента
+  puts "\nПроверка обновленного студента:"
+  puts list_adapter.find_student_by_id(1)
 
-  puts "\n=== Тестирование метода delete_student_by_id ==="
-  student_db.delete_student_by_id(4) # Удаляем студента с ID 4
-  puts "Студент с ID 4 удален."
+  # Удаление студента
+  puts "\nУдаление студента с ID 3:"
+  list_adapter.delete_student_by_id(3)
+  puts "Студент удален."
 
-  puts "\n=== Тестирование метода get_student_count после удаления ==="
-  count_after_delete = student_db.get_student_count
-  puts "Количество студентов после удаления: #{count_after_delete}"
-
-  puts "\n=== Итоговый список всех студентов ==="
-  result = db.execute_query("SELECT * FROM student")
-  result.each { |row| puts row }
-
+  # Итоговый список студентов
+  puts "\nИтоговый список студентов в базе данных:"
+  short_list = list_adapter.get_k_n_student_short_list(1, 10)
+  short_list.data.each { |student_short| puts student_short }
 rescue PG::Error => e
   puts "Ошибка подключения или выполнения запроса: #{e.message}"
-ensure
-  db.close if db
 end
 
-# Тестирование других частей программы
-puts "\n=== Тестирование работы со стратегиями JSON и YAML ==="
-
-# Тестирование стратегии JSON
-puts "\nТестирование стратегии JSON:"
+# Тестирование адаптера JSON
+puts "\nТестирование адаптера JSON:"
 json_strategy = JSONStrategy.new
-json_list = StudentsListBase.new('students.json', json_strategy)
+json_adapter = Students_list_adapter.new('students_test.json', json_strategy)
 
-json_list.add_student(student1)
-json_list.add_student(student2)
-json_list.add_student(student3)
-json_list.load_from_file
-puts "Студенты из JSON-файла:"
-json_list.students.each { |student| puts student }
+# Использование адаптера через общий интерфейс
+list_adapter = List_adapter.new(json_adapter)
 
-# Тестирование стратегии YAML
-puts "\nТестирование стратегии YAML:"
+# Добавление студентов
+puts "\nДобавление студентов в JSON через адаптер:"
+list_adapter.add_student(student1)
+list_adapter.add_student(student2)
+list_adapter.add_student(student3)
+puts "Студенты успешно добавлены."
+
+
+# Получение количества студентов
+puts "\nКоличество студентов в JSON:"
+puts list_adapter.get_student_short_count
+
+# Получение краткого списка студентов
+puts "\nКраткий список студентов (2 студента):"
+short_list = list_adapter.get_k_n_student_short_list(1, 2)
+short_list.data.each { |student_short| puts student_short }
+
+# Обновление студента
+puts "\nОбновление студента с ID 1:"
+updated_student = Student.new(
+  first_name: "Мария",
+  surname: "Кузнецова",
+  last_name: "Андреевна",
+  birthdate: "2001-07-07"
+)
+list_adapter.update_student_by_id(1, updated_student)
+
+# Проверка обновленного студента
+puts "\nПроверка обновленного студента:"
+puts list_adapter.find_student_by_id(1)
+
+# Удаление студента
+puts "\nУдаление студента с ID 2:"
+list_adapter.delete_student_by_id(2)
+puts "Студент удален."
+
+# Итоговый список студентов
+puts "\nИтоговый список студентов в JSON:"
+short_list = list_adapter.get_k_n_student_short_list(1, 10)
+short_list.data.each { |student_short| puts student_short }
+
+# Работа с адаптером для YAML
+puts "\n=== Тестирование адаптера YAML ==="
 yaml_strategy = YAMLStrategy.new
-yaml_list = StudentsListBase.new('students.yaml', yaml_strategy)
+yaml_adapter = Students_list_adapter.new('students.yaml', yaml_strategy)
+list_adapter = List_adapter.new(yaml_adapter)
 
-yaml_list.add_student(student1)
-yaml_list.add_student(student2)
-yaml_list.add_student(student3)
-yaml_list.load_from_file
-puts "Студенты из YAML-файла:"
-yaml_list.students.each { |student| puts student }
+# Добавление студентов
+puts "\nДобавление студентов в YAML через адаптер:"
+list_adapter.add_student(student1)
+list_adapter.add_student(student2)
+list_adapter.add_student(student3)
+puts "Студенты успешно добавлены."
 
-# Тестирование сортировки в YAML
-puts "\nСортировка студентов из YAML по фамилии:"
-yaml_list.sort_by_initials!
-yaml_list.students.each { |student| puts "#{student.surname} #{student.first_name} #{student.last_name}" }
+# Получение краткого списка студентов
+puts "\nКраткий список студентов из YAML (2 студента):"
+short_list = list_adapter.get_k_n_student_short_list(1, 2)
+short_list.data.each { |student_short| puts student_short }
