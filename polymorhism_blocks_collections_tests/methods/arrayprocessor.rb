@@ -6,26 +6,27 @@ class Arrayprocessor
   def elements
     array.dup
   end
-  def chunk
-    result = []
-    chunk = []
-    current_key = nil
+   def chunk
+    return enum_for(:chunk) unless block_given?
 
-    array.each do |item|
-      key = yield(item)
-      if chunk.empty? || current_key == key
-        chunk << item
-      else
-        result << [current_key, chunk]
-        chunk = [item]
+    Enumerator.new do |yielder|
+      chunk = []
+      current_key = nil
+
+      array.each do |item|
+        key = yield(item)
+        if chunk.empty? || current_key == key
+          chunk << item
+        else
+          yielder << [current_key, chunk]
+          chunk = [item]
+        end
+        current_key = key
       end
-      current_key = key
+
+      yielder << [current_key, chunk] unless chunk.empty?
     end
-
-    result << [current_key, chunk] unless chunk.empty?
-    result
   end
-
   def include?(value)
     array.each do |item|
       return true if item == value
