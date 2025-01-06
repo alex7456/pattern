@@ -134,16 +134,16 @@ end
     )
   end
 
-  private
+
 
   # Метод для нормализации контактов
-  def self.normalize_contact(value)
+  private def self.normalize_contact(value)
     return nil if value.nil? || value.strip.empty?
     value.strip
   end
 
   # Метод для обработки даты рождения
-  def self.parse_birthdate(value)
+  private def self.parse_birthdate(value)
     return nil if value.nil? || value.strip.empty? # Проверка на nil и пустую строку
 
     begin
@@ -169,12 +169,13 @@ end
 
   end
   def <=>(other)
-    if self.birthdate < other.birthdate
-      return -1
-    elsif self.birthdate == other.birthdate
-      return 0
-    else
-      return 1
+    other.birthdate <=> self.birthdate
+  end
+
+  def ==(other)
+    if @phone && other.phone && @phone == other.phone || @git && other.git && @git == other.git || @email && other.email && @email == other.email || @telegram && other.telegram && @telegram == other.telegram
+      return true
     end
+    return false
   end
   end
