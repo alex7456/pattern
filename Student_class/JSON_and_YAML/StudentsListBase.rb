@@ -1,85 +1,69 @@
-class StudentsListBase
-  attr_reader :students
+require_relative './Entities/Student'
+require_relative './Entities/student_short.rb'
+require_relative './DataList/data_list_student_short.rb'
 
-  def initialize(file_path, strategy)
-    @file_path = file_path
+class Students_list
+  def initialize(strategy, file_path)
     @strategy = strategy
     @students = []
-    load_from_file
+    @file_path = file_path
   end
 
-  # Загрузка данных
-  def load_from_file
+  def load
     @students = @strategy.load(@file_path)
   end
 
-  # Сохранение данных
-  def save_to_file
+  def save
     @strategy.save(@file_path, @students)
   end
 
-  # Найти студента по ID
-  def find_by_id(id)
+  def find_student_by_id(id)
     @students.find { |student| student.id == id }
   end
 
-  # Добавить нового студента
+  def get_k_n_student_short_list(k, n)
+    start_index = (k - 1) * n
+    end_index = start_index + n - 1
+
+    short_students = @students[start_index..end_index] || []
+
+    short_students = short_students.map { |student| Student_short.from_student(student) }
+    selected_list = Data_list_student_short.new(short_students)
+
+    short_students.each_with_index { |_, ind| selected_list.select(ind) }
+    selected_list
+  end
+
+  def sort_by_initials!
+    @students.sort_by!(&:fullname)
+  end
+
   def add_student(student)
     new_id = (@students.map(&:id).max || 0) + 1
     student.id = new_id
+    if @students.any? { |st| st == student }
+      raise ArgumentError, "Студент с такими контактами уже существует"
+    end
     @students << student
-    save_to_file
   end
 
-  # Удалить студента по ID
-  def delete_by_id(id)
-    @students.reject! { |student| student.id == id }
-    reassign_ids
-    save_to_file
-  end
-
-  # Обновить студента по ID
-  def update_by_id(id, updated_student)
+  def update_student_by_id(id, updated_student)
+    if @students.any? { |st| st == updated_student }
+      raise ArgumentError, "Студент с такими контактами уже существует"
+    end
     index = @students.find_index { |student| student.id == id }
     return false unless index
 
     updated_student.id = id
     @students[index] = updated_student
-    save_to_file
     true
   end
 
-  # Сортировка студентов по ФамилияИнициалы
-  def sort_by_initials!
-    @students.sort_by! do |student|
-      "#{student.last_name}#{student.surname[0]}#{student.first_name[0]}"
-    end
+  def delete_student_by_id(id)
+    @students.reject! { |student| student.id == id }
   end
 
-  # Получить список k по счету n объектов StudentShort
-  def get_k_n_student_short_list(k, n, existing_data_list = nil)
-    start_index = (k - 1) * n
-    selected_students = @students[start_index, n] || []
-    short_list = selected_students.map { |student| Student_short.from_student(student) }
-
-    if existing_data_list
-      existing_data_list.data = short_list
-      short_list.each_with_index { |_, i| existing_data_list.select(i) }
-      existing_data_list
-    else
-      data_list = Data_list_student_short.new(short_list)
-      short_list.each_with_index { |_, i| data_list.select(i) }
-      data_list
-    end
-  end
-
-  # Перенумерация ID после удаления
-  def reassign_ids
-    @students.each_with_index { |student, index| student.id = index + 1 }
-  end
-
-  # Получить количество студентов
-  def count
+  def get_student_short_count
     @students.size
   end
 end
