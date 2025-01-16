@@ -23,16 +23,17 @@ class Students_list_db_adapter < Adapter
     )
   end
 
-  def get_k_n_student_short_list(k, n)
-    start_index = (k - 1) * n
+  def get_k_n_student_short_list(k, n, filter = nil)
+    start_index = (k - 1) * n + 1
+    end_index = start_index + n - 1
     query = "
       SELECT * FROM student
-      OFFSET #{start_index} LIMIT #{n}
+      WHERE id BETWEEN #{start_index} AND #{end_index}
     "
     result = @db.execute_query(query)
     students = result.map do |row|
       Student.from_hash(
-        id: row['id'].to_i,
+        id: row['id'],
         lastname: row['last_name'],
         firstname: row['first_name'],
         surname: row['surname'],
@@ -43,8 +44,14 @@ class Students_list_db_adapter < Adapter
         birth_date: row['birth_date']
       )
     end
+
+    students = filter.apply_filter(students) if filter
+
     short_students = students.map { |student| Student_short.from_student(student) }
-    Data_list_student_short.new(short_students)
+
+    selected_list = Data_list_student_short.new(short_students)
+    short_students.each_with_index { |_, index| selected_list.select(index) }
+    selected_list
   end
 
   def add_student(student)
@@ -82,8 +89,26 @@ class Students_list_db_adapter < Adapter
     @db.execute_query("DELETE FROM student WHERE id = #{id}")
   end
 
-  def get_student_short_count
-    result = @db.execute_query('SELECT COUNT(*) FROM student')
-    result[0]['count'].to_i
+  def get_student_short_count(filter = nil)
+    query = 'SELECT * FROM student'
+    result = @db.execute_query(query)
+
+    students = result.map do |row|
+      Student.from_hash(
+        id: row['id'],
+        lastname: row['last_name'],
+        firstname: row['first_name'],
+        surname: row['surname'],
+        phone: row['phone'],
+        email: row['email'],
+        telegram: row['telegram'],
+        github: row['github'],
+        birth_date: row['birth_date']
+      )
+    end
+
+    filtered_students = filter ? filter.apply_filter(students) : students
+
+    filtered_students.size
   end
 end
