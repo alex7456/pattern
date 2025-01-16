@@ -137,13 +137,13 @@ end
 
 
   # Метод для нормализации контактов
-  private def self.normalize_contact(value)
+   def self.normalize_contact(value)
     return nil if value.nil? || value.strip.empty?
     value.strip
   end
-
+  private_class_method :normalize_contact
   # Метод для обработки даты рождения
-  private def self.parse_birthdate(value)
+   def self.parse_birthdate(value)
     return nil if value.nil? || value.strip.empty? # Проверка на nil и пустую строку
 
     begin
@@ -152,6 +152,7 @@ end
       raise "Ошибка в формате даты: #{e.message}"
     end
   end
+  private_class_method :parse_birthdate
 
 
   def to_s
