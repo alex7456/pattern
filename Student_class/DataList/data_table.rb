@@ -2,15 +2,26 @@ class Data_table
   def initialize(data)
     self.data = data
     end
-  
+
 
   def get_element(row, col)
-    if row >= 0 && row < row_count && col >= 0 && col < column_count
-      @data[row][col]
+    if row.is_a?(Integer) && col.is_a?(Integer)
+      if row >= 0 && row < row_count && col >= 0 && col < column_count
+        return @data[row][col]
+      else
+        raise IndexError, "index out of bounds"
+      end
+    elsif col.is_a?(Range)
+      if row >= 0 && row < row_count
+        return @data[row][col]
+      else
+        raise IndexError, "index out of bounds"
+      end
     else
-      raise IndexError, "index out of bounds"
+      raise ArgumentError, "Invalid row or column index type"
     end
   end
+
   def row_count
     @data.count
   end
