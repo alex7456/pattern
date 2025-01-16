@@ -4,7 +4,7 @@ class Adapter
     raise NotImplementedError, 'Method not implemented'
   end
 
-  def get_k_n_student_short_list(k, n)
+  def get_k_n_student_short_list(k, n, filter = nil)
     raise NotImplementedError, 'Method not implemented'
   end
 
@@ -20,7 +20,7 @@ class Adapter
     raise NotImplementedError, 'Method not implemented'
   end
 
-  def get_student_count
+  def get_student_count(filter = nil)
     raise NotImplementedError, 'Method not implemented'
   end
 end
