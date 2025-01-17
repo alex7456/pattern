@@ -35,7 +35,7 @@ class Students_list_DB
       phone: row['phone'],
       email: row['email'],
       telegram: row['telegram'],
-      git: row['github'],
+      github: row['github'],
       birthdate: row['birth_date']
     )
   end
@@ -57,7 +57,7 @@ class Students_list_DB
         phone: row['phone'],
         email: row['email'],
         telegram: row['telegram'],
-        git: row['github'],
+        github: row['github'],
         birthdate: row['birth_date']
       )
     end
@@ -76,7 +76,7 @@ class Students_list_DB
               #{student.phone.nil? ? 'NULL' : "'#{student.phone}'"},
               #{student.email.nil? ? 'NULL' : "'#{student.email}'"},
               #{student.telegram.nil? ? 'NULL' : "'#{student.telegram}'"},
-              #{student.git.nil? ? 'NULL' : "'#{student.git}'"},
+              #{student.github.nil? ? 'NULL' : "'#{student.github}'"},
               '#{student.birthdate}')
     "
     @db.execute_query(query)
@@ -92,7 +92,7 @@ class Students_list_DB
           phone = #{updated_student.phone.nil? ? 'NULL' : "'#{updated_student.phone}'"},
           email = #{updated_student.email.nil? ? 'NULL' : "'#{updated_student.email}'"},
           telegram = #{updated_student.telegram.nil? ? 'NULL' : "'#{updated_student.telegram}'"},
-          github = #{updated_student.git.nil? ? 'NULL' : "'#{updated_student.git}'"},
+          github = #{updated_student.github.nil? ? 'NULL' : "'#{updated_student.github}'"},
           birth_date = '#{updated_student.birthdate}'
       WHERE id = #{id}
     "
