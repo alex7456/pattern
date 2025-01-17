@@ -17,20 +17,21 @@ class Data_list_student_short < DataList
   end
 
   def notify
+
     @observers.each do |observer|
-      observer.set_table_params(self.column_names, @count)  # Используем self.column_names
+      observer.set_table_params(self.column_names, @count)
       observer.set_table_data(get_data)
     end
   end
 
   def column_names
-    ["ID", "ФИО", "Контакт", "Git"]  # Заголовки колонок
+    ["ID", "ФИО", "Контакт", "Github"]  # Заголовки колонок
   end
 
   private
 
   def extract_names
-    %w[initials contact git]
+    %w[initials contact github]
   end
 
   def extract_data(student, index)
@@ -38,7 +39,7 @@ class Data_list_student_short < DataList
       index,
       student.initials,
       student.contact,
-      student.git
+      student.github
     ]
   end
 end
