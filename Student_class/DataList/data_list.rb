@@ -28,16 +28,20 @@ class DataList
   end
   attr_reader :data
 
-  protected
+  def data=(data)
+    @data = data.map { |element| deep_dup(element) }
+  end
+
   attr_accessor :selected
+
+  protected
+
 
   def self.valid_index?(number,data)
     number.between?(0, data.size - 1)
   end
 
-  def data=(data)
-    @data = data.map { |element| deep_dup(element) }
-  end
+
   def deep_dup(element)
     if element.is_a?(Array)
       element.map { |sub_element| deep_dup(sub_element) }
