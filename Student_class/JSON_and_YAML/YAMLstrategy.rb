@@ -13,7 +13,7 @@ class YAMLStrategy < FileStrategy
         phone: student_data[:phone],
         telegram: student_data[:telegram],
         email: student_data[:email],
-        git: student_data[:git],
+        github: student_data[:github],
         birthdate: student_data[:birthdate],
         id: student_data[:id]
       )
@@ -28,7 +28,7 @@ class YAMLStrategy < FileStrategy
         last_name: student.last_name,
         surname: student.surname,
         contact: student.contact,
-        git: student.git,
+        github: student.github,
         birthdate: student.birthdate
       }
     end
