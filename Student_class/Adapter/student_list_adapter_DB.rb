@@ -24,32 +24,39 @@ class Students_list_db_adapter < Adapter
   end
 
   def get_k_n_student_short_list(k, n, filter = nil)
-    start_index = (k - 1) * n
-    query = "SELECT id, last_name, first_name, surname, phone, email, telegram, github FROM student ORDER BY id LIMIT #{n} OFFSET #{start_index}"
+    start_index = (k - 1) * n + 1
+    end_index = start_index + n - 1
+    query = "SELECT id, last_name, first_name, surname, phone, email, telegram, github FROM student WHERE id BETWEEN #{start_index} AND #{end_index}"
 
     result = @db.execute_query(query)
+
+
     students = result.map do |row|
-      id = row['id']
-      last_name = row['last_name']
-      first_name = row['first_name']
-      surname = row['surname']
-      phone = row['phone']
-      email = row['email']
-      telegram = row['telegram']
-      git = row['github']
 
-      # Формируем контакт (Email → Телефон → Telegram)
-      contact = email unless email.nil? || email.empty?
-      contact ||= phone unless phone.nil? || phone.empty?
-      contact ||= telegram unless telegram.nil? || telegram.empty?
-      contact ||= "Нет контактов"
-
-      # Возвращаем массив с 6 колонками
-      [id, "#{last_name} #{first_name[0]}. #{surname[0]}.", contact, git]
+      Student.from_hash(
+        id: row['id'].to_i,
+        lastname: row['last_name'],
+        firstname: row['first_name'],
+        surname: row['surname'],
+        phone: row['phone'],
+        email: row['email'],
+        telegram: row['telegram'],
+        github: row['github'], # Проверяем, есть ли значение
+        birth_date: row['birth_date']
+      )
     end
 
-    return Data_table.new(students) # Должно возвращать Data_table, а не Array!
+
+    students = filter.apply_filter(students) if filter
+    short_students = students.map { |student| Student_short.from_student(student) }
+
+
+    Data_list_student_short.new(short_students)
   end
+
+
+
+
 
 
 
@@ -61,7 +68,7 @@ class Students_list_db_adapter < Adapter
         #{student.phone.nil? ? 'NULL' : "'#{student.phone}'"},
         #{student.email.nil? ? 'NULL' : "'#{student.email}'"},
         #{student.telegram.nil? ? 'NULL' : "'#{student.telegram}'"},
-        #{student.git.nil? ? 'NULL' : "'#{student.git}'"},
+        #{student.github.nil? ? 'NULL' : "'#{student.github}'"},
         '#{student.birthdate}'
       )
     "
@@ -77,7 +84,7 @@ class Students_list_db_adapter < Adapter
           phone = #{updated_student.phone.nil? ? 'NULL' : "'#{updated_student.phone}'"},
           email = #{updated_student.email.nil? ? 'NULL' : "'#{updated_student.email}'"},
           telegram = #{updated_student.telegram.nil? ? 'NULL' : "'#{updated_student.telegram}'"},
-          github = #{updated_student.git.nil? ? 'NULL' : "'#{updated_student.git}'"},
+          github = #{updated_student.github.nil? ? 'NULL' : "'#{updated_student.github}'"},
           birth_date = '#{updated_student.birthdate}'
       WHERE id = #{id}
     "
