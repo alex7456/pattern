@@ -161,22 +161,36 @@ class StudentApp < FXMainWindow
   end
 
   def set_table_params(column_names, whole_entities_count)
-    @table.setTableSize(0, column_names.size)
+    @table.clearItems  # Очищаем содержимое таблицы
+    @table.setTableSize(0, column_names.size)  # Устанавливаем количество столбцов
+
     column_names.each_with_index do |name, index|
-      @table.setColumnText(index, name)
+      @table.setColumnText(index, name)  # Устанавливаем заголовки столбцов
     end
+
     total_pages = (whole_entities_count.to_f / @items_per_page).ceil
     update_pagination(@current_page, total_pages)
+
+    @table.update  # Обновляем таблицу
   end
 
   def set_table_data(data_table)
     @table.setTableSize(data_table.row_count, data_table.column_count)
+
     (0...data_table.row_count).each do |row_index|
       (0...data_table.column_count).each do |col_index|
-        @table.setItemText(row_index, col_index, data_table.get_element(row_index, col_index).to_s)
+        value = data_table.get_element(row_index, col_index)
+        value = value.nil? ? "—" : value.to_s # Если Git nil, показываем "—"
+
+        @table.setItemText(row_index, col_index, value)
       end
     end
+
+    @table.update
   end
+
+
+
 
   private
 
@@ -187,4 +201,5 @@ class StudentApp < FXMainWindow
   def change_page(page)
     @controller.change_page(page)
   end
+
 end
