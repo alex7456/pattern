@@ -1,7 +1,7 @@
 class Student_short < Human
   attr_reader :initials, :contact
-  def initialize(initials:, contact:, id:nil, git:nil)
-    super(id:id,git:git)
+  def initialize(initials:, contact:, id:nil, github:nil)
+    super(id:id,github:github)
     @initials= initials
     @contact = contact
   end
@@ -17,7 +17,7 @@ class Student_short < Human
       when "инициалы"
         data[:initials] = value
       when "github"
-        data[:git] = value
+        data[:github] = value
       when "контакт"
         data[:contact] = value
       end
@@ -28,26 +28,28 @@ class Student_short < Human
 
     new(**data)
   end
+
   def self.from_student(student)
+    puts "Создаём Student_short: ID=#{student.id}, Initials=#{student.initials}, Git=#{student.github.inspect}" # Debug
     new(
       initials: student.initials,
-    contact: student.contact,
-    id: student.id,
-    git: student.git,
-
+      contact: student.contact,
+      id: student.id,
+      github: student.github
     )
-
   end
+
+
   def to_s
     data = []
     data << "ID: #{@id}" if id
     data << "FIO: #{@initials}" if initials
     data << "Contact: #{@contact}" if contact
-    data << "Git: #{@git}" if git
+    data << "Git: #{@github}" if github
     data.join("\n")
   end
   def validate?
-    !git.nil? && !git.empty? && !contact.nil? && !contact.empty?
+    !github.nil? && !github.empty? && !contact.nil? && !contact.empty?
   end
   private_class_method :new
 end
