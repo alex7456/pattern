@@ -3,7 +3,9 @@ class Data_table
     self.data = data
     end
 
-
+  def get_data
+    @data
+  end
   def get_element(row, col)
     if row.is_a?(Integer) && col.is_a?(Integer)
       if row >= 0 && row < row_count && col >= 0 && col < column_count
