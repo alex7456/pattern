@@ -110,6 +110,31 @@ class StudentApp < FXMainWindow
     edit_button = FXButton.new(control_frame, "Изменить")
     delete_button = FXButton.new(control_frame, "Удалить")
     update_button = FXButton.new(control_frame, "Обновить")
+    edit_button.enabled = false
+    delete_button.enabled = false
+
+    @table.connect(SEL_SELECTED) do
+      selected_rows = (@table.selStartRow..@table.selEndRow).to_a
+      selected_count = selected_rows.count { |row| @table.rowSelected?(row) }
+
+      if selected_count == 0
+        edit_button.enabled = false
+        delete_button.enabled = false
+      elsif selected_count == 1
+        edit_button.enabled = true
+        delete_button.enabled = true
+      else
+        edit_button.enabled = false
+        delete_button.enabled = true
+      end
+    end
+
+    @table.connect(SEL_DESELECTED) do
+      edit_button.enabled = false
+      delete_button.enabled = false
+    end
+
+
     #tab2
     tab2 = FXTabItem.new(tab_book, "2")
     FXVerticalFrame.new(tab_book, LAYOUT_FILL).tap do |frame|
@@ -138,9 +163,9 @@ class StudentApp < FXMainWindow
     @table.setTableSize(0, 4)
 
     @table.setColumnWidth(0, 50)
-    @table.setColumnWidth(1, 200)
-    @table.setColumnWidth(2, 600)
-    @table.setColumnWidth(3, 200)
+    @table.setColumnWidth(1, 250)
+    @table.setColumnWidth(2, 350)
+    @table.setColumnWidth(3, 400)
 
   end
 
@@ -150,23 +175,41 @@ class StudentApp < FXMainWindow
 
     update_pagination_label(@current_page, total_pages)
 
-    data_list = @list_adapter.get_k_n_student_short_list(@current_page, @items_per_page, @filter)
-    data_table = data_list.get_data
+    data_table = @list_adapter.get_k_n_student_short_list(@current_page, @items_per_page, @filter)
 
-    @table.setTableSize(data_table.row_count - 1, data_table.column_count)
-
-    column_names = data_table.get_element(0, 0..data_table.column_count - 1)
-    column_names.each_with_index do |name, index|
-      @table.setColumnText(index, name.to_s) # Приведение к строке
+    # Проверяем, что data_table - это Data_table
+    unless data_table.is_a?(Data_table)
+      raise "Ошибка: get_k_n_student_short_list должен возвращать Data_table, но получен #{data_table.class}"
     end
 
+    # Проверяем, есть ли данные
+    return if data_table.nil? || data_table.row_count == 0
 
-    (1...data_table.row_count).each do |row_index|
-      (0...data_table.column_count).each do |col_index|
-        @table.setItemText(row_index - 1, col_index, data_table.get_element(row_index, col_index).to_s)
-      end
+    # Устанавливаем размер таблицы
+    @table.setTableSize(data_table.row_count, 4)
+
+    # Заголовки столбцов
+    column_names = ["ID", "ФИО", "Контакт", "Git"]
+    column_names.each_with_index { |name, index| @table.setColumnText(index, name) }
+
+    # Заполнение таблицы
+    (0...data_table.row_count).each do |row_index|
+      id = data_table.get_element(row_index, 0).to_s
+      fullname = data_table.get_element(row_index, 1).to_s
+      contact = data_table.get_element(row_index, 2).to_s
+      git = data_table.get_element(row_index, 3).to_s
+
+      @table.setItemText(row_index, 0, id)
+      @table.setItemText(row_index, 1, fullname)
+      @table.setItemText(row_index, 2, contact)
+      @table.setItemText(row_index, 3, git.empty? ? "Нет данных" : git)
     end
+    @table.setColumnWidth(0, 50)   # ID
+    @table.setColumnWidth(1, 250)  # ФИО
+    @table.setColumnWidth(2, 400)  # Контакт
+    @table.setColumnWidth(3, 450)  # Git
   end
+
 
   def update_pagination_label(current_page, total_pages)
     @page_label.text = "Страница: #{current_page}/#{total_pages}"
