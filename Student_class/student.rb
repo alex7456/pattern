@@ -9,8 +9,8 @@ class Student < Human
   PHONE_REGEX = /^\+?\d{11,15}$/
   TELEGRAM_REGEX = /^@[a-zA-Z0-9_]{5,}$/
   DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/
-  def initialize(first_name: , surname: , last_name: ,email:nil,phone:nil,telegram:nil,id:nil,git:nil,birthdate:nil)
-    super(id: id, git:git)
+  def initialize(first_name: , surname: , last_name: ,email:nil,phone:nil,telegram:nil,id:nil,github:nil,birthdate:nil)
+    super(id: id, github:github)
     self.first_name = first_name if first_name
     self.surname = surname if surname
     self.last_name = last_name if last_name
@@ -107,7 +107,7 @@ end
     !contact.nil? && !contact.empty?
   end
   def validate?
-    git_present?(@git) || contact_present?(contact)
+    git_present?(@github) || contact_present?(contact)
   end
 
   def self.from_hash(hash)
@@ -118,7 +118,7 @@ end
     phone = normalize_contact(hash[:phone])
     telegram = normalize_contact(hash[:telegram])
     email = normalize_contact(hash[:email])
-    git = normalize_contact(hash[:git])
+    github = normalize_contact(hash[:github]) # <-- Заменяем github на git
     birthdate = parse_birthdate(hash[:birthdate])
 
     new(
@@ -129,7 +129,7 @@ end
       phone: phone,
       telegram: telegram,
       email: email,
-      git: git,
+      github: github, # <-- Теперь git получает данные из github
       birthdate: birthdate
     )
   end
@@ -164,7 +164,7 @@ end
     data << "email: #{@email}" if @email
     data << "phone: #{@phone}" if @phone
     data << "telegram: #{@telegram}" if @telegram
-    data << "Git: #{@git}" if git
+    data << "Git: #{@github}" if github
     data << "Birthdate: #{@birthdate}" if birthdate
     data.join("\n")
 
@@ -174,7 +174,7 @@ end
   end
 
   def ==(other)
-    if @phone && other.phone && @phone == other.phone || @git && other.git && @git == other.git || @email && other.email && @email == other.email || @telegram && other.telegram && @telegram == other.telegram
+    if @phone && other.phone && @phone == other.phone || @github && other.github && @github == other.github || @email && other.email && @email == other.email || @telegram && other.telegram && @telegram == other.telegram
       return true
     end
     return false
