@@ -30,7 +30,6 @@ class Student_short < Human
   end
 
   def self.from_student(student)
-    puts "Создаём Student_short: ID=#{student.id}, Initials=#{student.initials}, Git=#{student.github.inspect}" # Debug
     new(
       initials: student.initials,
       contact: student.contact,
