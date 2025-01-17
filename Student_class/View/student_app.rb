@@ -4,15 +4,15 @@ require_relative './DataStructure/student_list_adapter_DB'
 require_relative './Database/connection'
 require_relative './Filter/Filter'
 require_relative './Filter/sort_by_fullname_filter'
+require_relative './Controllers/student_list_controllers'
 include Fox
 
 class StudentApp < FXMainWindow
+  attr_reader :items_per_page, :page_label, :table
+  attr_accessor :current_page
   def initialize(app, db_config)
     super(app, "Список студентов", width: 1200, height: 700)
-    #db connect
-    db_connection = Connection.instance(db_config)
-    db_adapter = Students_list_db_adapter.new(db_connection)
-    @list_adapter = Students_list_db_adapter.new(db_adapter)
+    @controller = StudentListController.new(self, db_config)
 
     @current_page = 1
     @items_per_page = 20
@@ -95,7 +95,7 @@ class StudentApp < FXMainWindow
     #table
     table_frame = FXHorizontalFrame.new(tab1_frame, LAYOUT_FILL)
     @table = FXTable.new(table_frame, nil, 0, TABLE_COL_SIZABLE | LAYOUT_FILL | TABLE_READONLY | TABLE_NO_COLSELECT)
-    setup_table
+
 
     #pages
     pagination_frame = FXHorizontalFrame.new(tab1_frame, LAYOUT_FILL_X | PACK_UNIFORM_WIDTH)
@@ -112,6 +112,9 @@ class StudentApp < FXMainWindow
     update_button = FXButton.new(control_frame, "Обновить")
     edit_button.enabled = false
     delete_button.enabled = false
+    update_button.connect(SEL_COMMAND) do
+      @controller.refresh_data
+    end
 
     @table.connect(SEL_SELECTED) do
       selected_rows = (@table.selStartRow..@table.selEndRow).to_a
@@ -149,7 +152,7 @@ class StudentApp < FXMainWindow
     quit_button = FXButton.new(self, "Закрыть окно", nil, nil, 0, FRAME_RAISED | LAYOUT_FILL_X)
     quit_button.connect(SEL_COMMAND) { getApp().exit }
 
-    load_data
+    @controller.refresh_data
   end
 
   def create
@@ -157,72 +160,31 @@ class StudentApp < FXMainWindow
     show(PLACEMENT_SCREEN)
   end
 
+  def set_table_params(column_names, whole_entities_count)
+    @table.setTableSize(0, column_names.size)
+    column_names.each_with_index do |name, index|
+      @table.setColumnText(index, name)
+    end
+    total_pages = (whole_entities_count.to_f / @items_per_page).ceil
+    update_pagination(@current_page, total_pages)
+  end
+
+  def set_table_data(data_table)
+    @table.setTableSize(data_table.row_count, data_table.column_count)
+    (0...data_table.row_count).each do |row_index|
+      (0...data_table.column_count).each do |col_index|
+        @table.setItemText(row_index, col_index, data_table.get_element(row_index, col_index).to_s)
+      end
+    end
+  end
+
   private
 
-  def setup_table
-    @table.setTableSize(0, 4)
-
-    @table.setColumnWidth(0, 50)
-    @table.setColumnWidth(1, 250)
-    @table.setColumnWidth(2, 350)
-    @table.setColumnWidth(3, 400)
-
-  end
-
-  def load_data
-    total_items = @list_adapter.get_student_short_count(@filter)
-    total_pages = (total_items.to_f / @items_per_page).ceil
-
-    update_pagination_label(@current_page, total_pages)
-
-    data_table = @list_adapter.get_k_n_student_short_list(@current_page, @items_per_page, @filter)
-
-    # Проверяем, что data_table - это Data_table
-    unless data_table.is_a?(Data_table)
-      raise "Ошибка: get_k_n_student_short_list должен возвращать Data_table, но получен #{data_table.class}"
-    end
-
-    # Проверяем, есть ли данные
-    return if data_table.nil? || data_table.row_count == 0
-
-    # Устанавливаем размер таблицы
-    @table.setTableSize(data_table.row_count, 4)
-
-    # Заголовки столбцов
-    column_names = ["ID", "ФИО", "Контакт", "Git"]
-    column_names.each_with_index { |name, index| @table.setColumnText(index, name) }
-
-    # Заполнение таблицы
-    (0...data_table.row_count).each do |row_index|
-      id = data_table.get_element(row_index, 0).to_s
-      fullname = data_table.get_element(row_index, 1).to_s
-      contact = data_table.get_element(row_index, 2).to_s
-      git = data_table.get_element(row_index, 3).to_s
-
-      @table.setItemText(row_index, 0, id)
-      @table.setItemText(row_index, 1, fullname)
-      @table.setItemText(row_index, 2, contact)
-      @table.setItemText(row_index, 3, git.empty? ? "Нет данных" : git)
-    end
-    @table.setColumnWidth(0, 50)   # ID
-    @table.setColumnWidth(1, 250)  # ФИО
-    @table.setColumnWidth(2, 400)  # Контакт
-    @table.setColumnWidth(3, 450)  # Git
-  end
-
-
-  def update_pagination_label(current_page, total_pages)
-    @page_label.text = "Страница: #{current_page}/#{total_pages}"
+  def update_pagination(current_page, total_pages)
+    @controller.update_pagination(current_page, total_pages)
   end
 
   def change_page(page)
-    total_items = @list_adapter.get_student_short_count
-    total_pages = (total_items.to_f / @items_per_page).ceil
-
-    new_page = @current_page + page
-    return if new_page < 1 || new_page > total_pages
-
-    @current_page = new_page
-    load_data
+    @controller.change_page(page)
   end
 end
