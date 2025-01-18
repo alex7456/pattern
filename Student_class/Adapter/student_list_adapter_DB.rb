@@ -26,39 +26,33 @@ class Students_list_db_adapter < Adapter
   def get_k_n_student_short_list(k, n, filter = nil)
     start_index = (k - 1) * n + 1
     end_index = start_index + n - 1
-    query = "SELECT id, last_name, first_name, surname, phone, email, telegram, github FROM student WHERE id BETWEEN #{start_index} AND #{end_index}"
+    query = "SELECT id, last_name, first_name, surname, phone, email, telegram, github, birth_date FROM student WHERE id BETWEEN #{start_index} AND #{end_index}"
 
     result = @db.execute_query(query)
-
 
     students = result.map do |row|
 
       Student.from_hash(
         id: row['id'].to_i,
-        lastname: row['last_name'],
-        firstname: row['first_name'],
+        last_name: row['last_name'],
+        first_name: row['first_name'],
         surname: row['surname'],
         phone: row['phone'],
         email: row['email'],
         telegram: row['telegram'],
-        github: row['github'], # Проверяем, есть ли значение
-        birth_date: row['birth_date']
+        github: row['github'],
+        birthdate: row['birth_date'].is_a?(String) ? Date.parse(row['birth_date']) : row['birth_date']
+
       )
     end
 
-
     students = filter.apply_filter(students) if filter
-    short_students = students.map { |student| Student_short.from_student(student) }
-
+    short_students = students.map do |student|
+      Student_short.from_student(student)
+    end
 
     Data_list_student_short.new(short_students)
   end
-
-
-
-
-
-
 
   def add_student(student)
     query = "
