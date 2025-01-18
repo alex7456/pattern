@@ -32,8 +32,9 @@ class Student < Human
     telegram =~ TELEGRAM_REGEX
   end
   def self.valid_birthdate?(birthdate)
-    birthdate =~ DATE_REGEX
+    birthdate.is_a?(Date) || (birthdate.is_a?(String) && birthdate =~ DATE_REGEX)
   end
+
   def first_name=(value)
     if self.class.valid_name?(value)
       @first_name = value
@@ -52,12 +53,15 @@ class Student < Human
 
 end
   def birthdate=(value)
-    if self.class.valid_birthdate?(value)
+    if value.is_a?(Date)
       @birthdate = value
+    elsif value.is_a?(String) && self.class.valid_birthdate?(value)
+      @birthdate = Date.parse(value)
     else
-      raise ArgumentError, "Invalid birthdate"
+      raise ArgumentError, "Invalid birthdate format: #{value.inspect}"
     end
   end
+
   def surname=(value)
     if self.class.valid_name?(value)
       @surname = value
@@ -92,8 +96,9 @@ end
     self.telegram = telegram if telegram
   end
   def initials
-    "#{surname}#{first_name.is_a?(String) ? first_name[0]&.upcase : ''}. #{last_name.is_a?(String) ? last_name[0]&.upcase : ''}."
+    "#{surname} #{first_name&.slice(0, 1)&.upcase || ''}. #{last_name&.slice(0, 1)&.upcase || ''}."
   end
+
 
 
   def contact
@@ -118,7 +123,7 @@ end
     phone = normalize_contact(hash[:phone])
     telegram = normalize_contact(hash[:telegram])
     email = normalize_contact(hash[:email])
-    github = normalize_contact(hash[:github]) # <-- Заменяем github на git
+    github = normalize_contact(hash[:github])
     birthdate = parse_birthdate(hash[:birthdate])
 
     new(
@@ -129,7 +134,7 @@ end
       phone: phone,
       telegram: telegram,
       email: email,
-      github: github, # <-- Теперь git получает данные из github
+      github: github,
       birthdate: birthdate
     )
   end
@@ -143,15 +148,19 @@ end
   end
   private_class_method :normalize_contact
   # Метод для обработки даты рождения
-   def self.parse_birthdate(value)
-    return nil if value.nil? || value.strip.empty? # Проверка на nil и пустую строку
+  def self.parse_birthdate(value)
+    return nil if value.nil?
+
+    return value if value.is_a?(Date)
+    value = value.strip if value.is_a?(String)
 
     begin
-      Date.parse(value.strip)
+      Date.parse(value)
     rescue ArgumentError => e
       raise "Ошибка в формате даты: #{e.message}"
     end
   end
+
   private_class_method :parse_birthdate
 
 
