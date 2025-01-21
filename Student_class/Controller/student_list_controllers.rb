@@ -7,11 +7,21 @@ class StudentListController
   end
 
   def refresh_data
-    @data_list_student_short.data = @student_list.get_k_n_student_short_list(@view.current_page, @view.items_per_page).data
-    @data_list_student_short.selected = @student_list.get_k_n_student_short_list(@view.current_page, @view.items_per_page).selected
-    @data_list_student_short.count = @student_list.get_student_short_count
+    total_items = @student_list.get_student_short_count
+    total_pages = (total_items.to_f / @view.items_per_page).ceil
+
+    student_data = @student_list.get_k_n_student_short_list(@view.current_page, @view.items_per_page)
+
+    @data_list_student_short.data = student_data.data
+    @data_list_student_short.selected = student_data.selected
+    @data_list_student_short.count = total_items
+
     @data_list_student_short.notify
+
+    update_pagination(@view.current_page, total_pages) # Обновляем `@page_label.text`
   end
+
+
 
   def update_pagination(current_page, total_pages)
     @view.page_label.text = "Страница: #{current_page}/#{total_pages}"
@@ -26,5 +36,7 @@ class StudentListController
 
     @view.current_page = new_page
     refresh_data
+    update_pagination(@view.current_page, total_pages) # Обновляем текст страницы
   end
+
 end
