@@ -22,19 +22,17 @@ class StudentApp < FXMainWindow
     tab1 = FXTabItem.new(tab_book, "Список студентов")
     tab1_frame = FXVerticalFrame.new(tab_book, LAYOUT_FILL)
 
-    filter_frame = FXVerticalFrame.new(tab1_frame, LAYOUT_FILL_X | PACK_UNIFORM_WIDTH)
+    filter_frame = FXVerticalFrame.new(tab1_frame, LAYOUT_FILL_X | PACK_UNIFORM_WIDTH, padding: 10)
 
-    #git
-    git_filter_frame = FXHorizontalFrame.new(filter_frame, LAYOUT_FILL_X)
-    FXLabel.new(git_filter_frame, "Наличие гита:")
-    @git_choice = FXComboBox.new(git_filter_frame, 3, nil, 0, COMBOBOX_STATIC | COMBOBOX_NO_REPLACE | LAYOUT_FILL_X)
+    git_filter_frame = FXHorizontalFrame.new(filter_frame, LAYOUT_FILL_X, padding: 5)
+    FXLabel.new(git_filter_frame, "Наличие гита:", opts: JUSTIFY_LEFT | LAYOUT_FILL_X)
+    @git_choice = FXComboBox.new(git_filter_frame, 3, nil, 0, COMBOBOX_STATIC | LAYOUT_FILL_X)
     @git_choice.appendItem("Да")
     @git_choice.appendItem("Нет")
     @git_choice.appendItem("Не важно")
-    @git_choice.numVisible = 3
-    FXLabel.new(git_filter_frame, "Поиск по гиту:")
-    @git_search_field = FXTextField.new(git_filter_frame, 25)
-    @git_search_field.enabled = true
+    FXLabel.new(git_filter_frame, "Поиск по гиту:", opts: JUSTIFY_LEFT | LAYOUT_FILL_X)
+    @git_search_field = FXTextField.new(git_filter_frame, 40, opts: LAYOUT_FILL_X) # Увеличиваем до 40 символов
+
 
     @git_choice.connect(SEL_COMMAND) do
       @git_search_field.enabled = @git_choice.currentItem == 0
@@ -50,7 +48,7 @@ class StudentApp < FXMainWindow
     @email_choice.appendItem("Не важно")
     @email_choice.numVisible = 3
     FXLabel.new(email_filter_frame, "Поиск по почте:")
-    @email_search_field = FXTextField.new(email_filter_frame, 25)
+    @email_search_field = FXTextField.new(email_filter_frame, 40, opts: LAYOUT_FILL_X)
     @email_search_field.enabled = true
 
     @email_choice.connect(SEL_COMMAND) do
@@ -67,7 +65,7 @@ class StudentApp < FXMainWindow
     @phone_choice.appendItem("Не важно")
     @phone_choice.numVisible = 3
     FXLabel.new(phone_filter_frame, "Поиск по телефону:")
-    @phone_search_field = FXTextField.new(phone_filter_frame, 25)
+    @phone_search_field = FXTextField.new(phone_filter_frame, 40, opts: LAYOUT_FILL_X)
     @phone_search_field.enabled = true
 
     @phone_choice.connect(SEL_COMMAND) do
@@ -84,7 +82,7 @@ class StudentApp < FXMainWindow
     @telegram_choice.appendItem("Не важно")
     @telegram_choice.numVisible = 3
     FXLabel.new(telegram_filter_frame, "Поиск по Telegram:")
-    @telegram_search_field = FXTextField.new(telegram_filter_frame, 25)
+    @telegram_search_field = FXTextField.new(telegram_filter_frame, 40, opts: LAYOUT_FILL_X)
     @telegram_search_field.enabled = true
 
     @telegram_choice.connect(SEL_COMMAND) do
@@ -93,8 +91,29 @@ class StudentApp < FXMainWindow
     end
 
     #table
-    table_frame = FXHorizontalFrame.new(tab1_frame, LAYOUT_FILL)
-    @table = FXTable.new(table_frame, nil, 0, TABLE_COL_SIZABLE | LAYOUT_FILL | TABLE_READONLY | TABLE_NO_COLSELECT)
+    # Убеждаемся, что table_frame привязан к tab1_frame
+    table_frame = FXHorizontalFrame.new(tab1_frame, LAYOUT_FILL, width: 1000, height: 400)
+
+    @table = FXTable.new(table_frame, nil, 0,
+                         TABLE_COL_SIZABLE | TABLE_ROW_SIZABLE |
+                           TABLE_NO_COLSELECT | TABLE_NO_ROWSELECT |
+                           LAYOUT_FILL)
+
+    @table.setTableSize(1, 4)  # 1 строка для заголовков, 4 столбца
+
+    column_names = ["ID", "ФИО", "Контакт", "Github"]
+    column_names.each_with_index do |name, index|
+      @table.setColumnText(index, name)  # Устанавливаем заголовок
+      @table.setColumnWidth(index, 120)  # Ширина столбцов
+    end
+
+    @table.setTableStyle(TABLE_COL_SIZABLE | TABLE_ROW_SIZABLE)  # Настройка таблицы
+    @table.setBackColor(FXRGB(255, 255, 255)) # Белый фон
+
+    @table.update  # Обновление UI
+
+
+
 
 
     #pages
@@ -105,11 +124,12 @@ class StudentApp < FXMainWindow
     prev_button.connect(SEL_COMMAND) { change_page(-1) }
     next_button.connect(SEL_COMMAND) { change_page(1) }
     #control buttons
-    control_frame = FXHorizontalFrame.new(tab1_frame, LAYOUT_FILL_X | PACK_UNIFORM_WIDTH)
-    add_button = FXButton.new(control_frame, "Добавить")
-    edit_button = FXButton.new(control_frame, "Изменить")
-    delete_button = FXButton.new(control_frame, "Удалить")
-    update_button = FXButton.new(control_frame, "Обновить")
+    control_frame = FXHorizontalFrame.new(tab1_frame, LAYOUT_FILL_X | PACK_UNIFORM_WIDTH, padding: 10)
+    add_button = FXButton.new(control_frame, "Добавить", opts: BUTTON_NORMAL, width: 100, height: 40)
+    edit_button = FXButton.new(control_frame, "Изменить", opts: BUTTON_NORMAL, width: 100, height: 40)
+    delete_button = FXButton.new(control_frame, "Удалить", opts: BUTTON_NORMAL, width: 100, height: 40)
+    update_button = FXButton.new(control_frame, "Обновить", opts: BUTTON_NORMAL, width: 100, height: 40)
+
     edit_button.enabled = false
     delete_button.enabled = false
     update_button.connect(SEL_COMMAND) do
@@ -161,34 +181,54 @@ class StudentApp < FXMainWindow
   end
 
   def set_table_params(column_names, whole_entities_count)
-    @table.clearItems  # Очищаем содержимое таблицы
-    @table.setTableSize(0, column_names.size)  # Устанавливаем количество столбцов
+    @table.clearItems
+    @table.setTableSize(1, column_names.size)  # 1 строка для заголовков
 
     column_names.each_with_index do |name, index|
-      @table.setColumnText(index, name)  # Устанавливаем заголовки столбцов
+      puts "DEBUG: Устанавливаем заголовок #{index} = #{name}"
+      @table.setColumnText(index, name)
     end
 
-    total_pages = (whole_entities_count.to_f / @items_per_page).ceil
-    update_pagination(@current_page, total_pages)
+    # Устанавливаем ширину столбцов
+    set_column_widths
 
-    @table.update  # Обновляем таблицу
+    @table.setTableStyle(TABLE_COL_SIZABLE | TABLE_ROW_SIZABLE | TABLE_READONLY) # Включаем заголовки и изменяемый размер
+    @table.update  # Принудительное обновление UI
   end
 
+
+  def set_column_widths
+    @table.setColumnWidth(0, 100)  # ID
+    @table.setColumnWidth(1, 300) # ФИО
+    @table.setColumnWidth(2, 200) # Контакт
+    @table.setColumnWidth(3, 300) # Github
+  end
+
+
+
+
+
+
   def set_table_data(data_table)
+    offset = (@current_page - 1) * @items_per_page  # Вычисляем смещение ID
     @table.setTableSize(data_table.row_count, data_table.column_count)
 
     (0...data_table.row_count).each do |row_index|
       (0...data_table.column_count).each do |col_index|
         value = data_table.get_element(row_index, col_index)
-        value = value.nil? ? "—" : value.to_s # Если Git nil, показываем "—"
 
+        # Если это первый столбец (ID), добавляем offset
+        value = (row_index + 1 + offset).to_s if col_index == 0
+
+        value = value.nil? ? "—" : value.to_s
         @table.setItemText(row_index, col_index, value)
       end
     end
 
+    set_column_widths  # Устанавливаем ширину столбцов после данных
+
     @table.update
   end
-
 
 
 
@@ -198,8 +238,9 @@ class StudentApp < FXMainWindow
     @controller.update_pagination(current_page, total_pages)
   end
 
-  def change_page(page)
-    @controller.change_page(page)
+  def change_page(direction)
+    @controller.change_page(direction)
   end
+
 
 end
